@@ -8,6 +8,9 @@ public class ZoomCommand
 	// --------------------------------------------------
 	
 	public ZoomCommand(Perspective subject, double augmentation) {
+		if (augmentation < 0)
+			throw new IllegalArgumentException("Augmentation cannot be negative.");
+		
 		this.subject = subject;
 		this.augmentation = augmentation;
 	}
@@ -40,5 +43,4 @@ public class ZoomCommand
 
 	private Perspective subject;
 	private double augmentation;
-	
 }
