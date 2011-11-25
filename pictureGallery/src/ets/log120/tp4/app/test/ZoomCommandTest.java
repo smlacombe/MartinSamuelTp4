@@ -46,9 +46,6 @@ public class ZoomCommandTest {
 		
 		Command command = new ZoomCommand(perspective, 0.5);
 		command.doCommand();
-		
-		assertEquals(1.5, perspective.getZoom(), Double.MIN_VALUE);
-		
 		command.undoCommand();
 		
 		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
@@ -60,9 +57,6 @@ public class ZoomCommandTest {
 		
 		Command command = new ZoomCommand(perspective, -0.5);
 		command.doCommand();
-		
-		assertEquals(0.5, perspective.getZoom(), Double.MIN_VALUE);
-		
 		command.undoCommand();
 		
 		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
