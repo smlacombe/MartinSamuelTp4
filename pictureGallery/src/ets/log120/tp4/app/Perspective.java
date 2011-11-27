@@ -2,9 +2,9 @@ package ets.log120.tp4.app;
 
 public class Perspective {
 	
-	public ImageChangedEvent    imageUpdated    = new ImageChangedEvent();
-	public ZoomChangedEvent     zoomUpdated     = new ZoomChangedEvent();
-	public PositionChangedEvent positionUpdated = new PositionChangedEvent();
+	public ImageChangedEvent    imageChanged    = new ImageChangedEvent();
+	public ZoomChangedEvent     zoomChanged     = new ZoomChangedEvent();
+	public PositionChangedEvent positionChanged = new PositionChangedEvent();
 	
 	// --------------------------------------------------
 	// Constructeur(s)
@@ -39,22 +39,22 @@ public class Perspective {
 	public void setImage(String value) {
 		image = value;
 		
-		imageUpdated.setChanged();
-		imageUpdated.notifyObservers();
+		imageChanged.setChanged();
+		imageChanged.notifyObservers();
 	}
 	
 	public void setZoom(double value) {
 		zoom = value;
 		
-		zoomUpdated.setChanged();
-		zoomUpdated.notifyObservers();
+		zoomChanged.setChanged();
+		zoomChanged.notifyObservers();
 	}
 	
 	public void setPosition(java.awt.Point value) {
 		position = value;
 		
-		positionUpdated.setChanged();
-		positionUpdated.notifyObservers();
+		positionChanged.setChanged();
+		positionChanged.notifyObservers();
 	}
 	
 	// --------------------------------------------------

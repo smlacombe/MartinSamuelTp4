@@ -8,7 +8,6 @@ import org.junit.Test;
 import ets.log120.tp4.app.Command;
 import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.TranslationCommand;
-import ets.log120.tp4.app.ZoomCommand;
 
 public class TranslationCommandTest {
 
