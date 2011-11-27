@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import ets.log120.tp4.app.Command;
 import ets.log120.tp4.app.Perspective;
+import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
 public class TranslationCommandTest {
@@ -20,49 +21,56 @@ public class TranslationCommandTest {
 	// Test(s)
 	// --------------------------------------------------
 	
-	/*
 	@Test
-	public void testDoZoomIn() {
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
+	public void testDoHorizontalTranslation() {
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
 		
-		Command command = new ZoomCommand(perspective, 0.5);
+		Command command = new TranslationCommand(perspective, 10, 0);
 		command.doCommand();
 		
-		assertEquals(1.5, perspective.getZoom(), Double.MIN_VALUE);
+		assertEquals(new java.awt.Point(10, 0), perspective.getPosition());
 	}
 	
 	@Test
-	public void testDoZoomOut() {
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
+	public void testDoVerticalTranslation() {
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
 		
-		Command command = new ZoomCommand(perspective, -0.5);
+		Command command = new TranslationCommand(perspective, 0, 10);
 		command.doCommand();
 		
-		assertEquals(0.5, perspective.getZoom(), Double.MIN_VALUE);
-	}
-
-	@Test
-	public void testUndoZoomIn() {
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
-		
-		Command command = new ZoomCommand(perspective, 0.5);
-		command.doCommand();
-		command.undoCommand();
-		
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
+		assertEquals(new java.awt.Point(0, 10), perspective.getPosition());
 	}
 	
 	@Test
-	public void testUndoZoomOut() {
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
+	public void testDoTranslation() {
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
 		
-		Command command = new ZoomCommand(perspective, -0.5);
+		Command command = new TranslationCommand(perspective, 10, 10);
+		command.doCommand();
+		
+		assertEquals(new java.awt.Point(10, 10), perspective.getPosition());
+	}
+	
+	@Test
+	public void testDoNegativeTranslation() {
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
+		
+		Command command = new TranslationCommand(perspective, -10, -10);
+		command.doCommand();
+		
+		assertEquals(new java.awt.Point(-10, -10), perspective.getPosition());
+	}
+	
+	@Test
+	public void testUndoTranslation() {
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
+		
+		Command command = new TranslationCommand(perspective, 10, 10);
 		command.doCommand();
 		command.undoCommand();
 		
-		assertEquals(1, perspective.getZoom(), Double.MIN_VALUE);
+		assertEquals(new java.awt.Point(0, 0), perspective.getPosition());
 	}
-	*/
 
 	// --------------------------------------------------
 	// Attribut(s)
