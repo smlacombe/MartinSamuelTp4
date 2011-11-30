@@ -7,13 +7,14 @@ import org.junit.Test;
 
 import ets.log120.tp4.app.Command;
 import ets.log120.tp4.app.Perspective;
+import ets.log120.tp4.app.PerspectiveFactory;
 import ets.log120.tp4.app.TranslationCommand;
 
 public class TranslationCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		perspective = new Perspective("image.png");
+		perspective = PerspectiveFactory.makePerspective();
 	}
 	
 	// --------------------------------------------------

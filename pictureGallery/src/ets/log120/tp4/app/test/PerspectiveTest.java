@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ets.log120.tp4.app.Perspective;
+import ets.log120.tp4.app.PerspectiveFactory;
 
 public class PerspectiveTest {
 	
@@ -24,7 +25,7 @@ public class PerspectiveTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		perspective = new Perspective("image.png");
+		perspective = PerspectiveFactory.makePerspective();
 	}
 	
 	// --------------------------------------------------

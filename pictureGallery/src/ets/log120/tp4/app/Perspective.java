@@ -10,8 +10,8 @@ public class Perspective {
 	// Constructeur(s)
 	// --------------------------------------------------
 	
-	public Perspective(String image) {
-		this.image = image;
+	public Perspective() {
+		this.image = "";
 		this.zoom = 1.0;
 		this.position = new java.awt.Point(0, 0);
 	}
