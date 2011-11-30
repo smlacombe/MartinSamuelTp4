@@ -30,7 +30,7 @@ public class TranslationCommand
 			java.awt.Point current = subject.getPosition();
 			double newX = current.getX() + x;
 			double newY = current.getY() + y;
-			subject.getPosition().setLocation(newX, newY);
+			subject.setPosition(new java.awt.Point((int) newX, (int) newY));
 		}
 
 		@Override
@@ -38,7 +38,7 @@ public class TranslationCommand
 			java.awt.Point current = subject.getPosition();
 			double newX = current.getX() - x;
 			double newY = current.getY() - y;
-			subject.getPosition().setLocation(newX, newY);
+			subject.setPosition(new java.awt.Point((int) newX, (int) newY));
 		}
 		
 		// --------------------------------------------------
