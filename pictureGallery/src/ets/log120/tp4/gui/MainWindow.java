@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.PerspectiveFactory;
@@ -36,7 +37,7 @@ public class MainWindow extends JFrame {
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				image.setImage("image2.png");
+				controller.performCommand(new ChangeImageCommand(image, "image" + ++n + ".png"));
 			}
 		});
 		
@@ -79,7 +80,6 @@ public class MainWindow extends JFrame {
 		image.imageChanged.addObserver(listener);
 		image.zoomChanged.addObserver(listener);
 		image.positionChanged.addObserver(listener);
-		image.setImage("image.png");
 		
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -115,6 +115,7 @@ public class MainWindow extends JFrame {
 	
 	private java.util.Properties lang;
 	
+	int n = 0;
 	private JButton button1;
 	private JButton button2;
 	private JButton button3;

@@ -2,10 +2,7 @@ package ets.log120.tp4.app.test;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ets.log120.tp4.app.Command;
