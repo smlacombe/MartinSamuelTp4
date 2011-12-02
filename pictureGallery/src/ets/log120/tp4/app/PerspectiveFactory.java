@@ -17,7 +17,7 @@ public class PerspectiveFactory {
 	 * Retourne une nouvelle perspective contenant une image définie.
 	 */
 	public static Perspective makePerspective(String image) {
-		return makePerspective(image, 0.0, new java.awt.Point(0, 0));
+		return makePerspective(image, 0.0);
 	}
 
 	/**
