@@ -3,13 +3,21 @@ package ets.log120.tp4.gui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Observable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 
 import ets.log120.tp4.app.ChangeImageCommand;
@@ -32,6 +40,13 @@ public class MainWindow extends JFrame {
 		
 		add(imageView = new JTextArea(5, 20));
 		imageView.setEditable(false);
+		// Permet d'utiliser la molette de la sourie pour agrendir ou réduire la taille de l'image
+		imageView.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent event) {
+				controller.performCommand(new ZoomCommand(image, -1 * event.getWheelRotation() * 0.5));
+			}
+		});
 		
 		add(button1 = new JButton("Image"));
 		button1.addActionListener(new ActionListener() {
@@ -57,6 +72,21 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
+		// Ajoute un menu contextuel au bouton « Annuler »
+		undoMenu = new JPopupMenu();
+		undoMenuItems = new LinkedList<JMenuItem>();
+		
+		for (int i = 1; i <= 10; ++i) {
+			undoMenuItems.addLast(new JMenuItem("Item " + i));
+			undoMenuItems.getLast().addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Item ? clicked.");
+				}
+			});
+			undoMenu.add(undoMenuItems.getLast());
+		}
+		
 		add(undoButton = new JButton("Annuler"));
 		undoButton.addActionListener(new ActionListener() {
 			@Override
@@ -64,7 +94,9 @@ public class MainWindow extends JFrame {
 				controller.undo();
 			}
 		});
+		undoButton.addMouseListener(new PopupListener(undoMenu));
 		
+		// Bouton « Refaire »
 		add(redoButton = new JButton("Refaire"));
 		redoButton.addActionListener(new ActionListener() {
 			@Override
@@ -119,8 +151,12 @@ public class MainWindow extends JFrame {
 	private JButton button1;
 	private JButton button2;
 	private JButton button3;
+	
 	private JButton undoButton;
 	private JButton redoButton;
+	private JPopupMenu undoMenu;
+	private LinkedList<JMenuItem> undoMenuItems;
+	
 	private JTextArea imageView;
 	private Perspective image;
 	private Controller controller = new Controller();;
@@ -137,4 +173,27 @@ public class MainWindow extends JFrame {
 				+ "\nPosition: (" + image.getPosition().getX() + ", " + image.getPosition().getX() + ")");
 		}
 	}
+	
+	class PopupListener extends MouseAdapter {
+        JPopupMenu popup;
+ 
+        PopupListener(JPopupMenu popupMenu) {
+            popup = popupMenu;
+        }
+ 
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+ 
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+ 
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                popup.show(e.getComponent(),
+                           e.getX(), e.getY());
+            }
+        }
+    }
 }
