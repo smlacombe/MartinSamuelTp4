@@ -1,9 +1,13 @@
 package ets.log120.tp4.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observable;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,8 +28,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
@@ -42,25 +50,61 @@ public class MainWindowImagePanel extends JFrame {
 	public MainWindowImagePanel() {
 		super();
 		initLang();
-		//setLayout(new SpringLayout());
-		setLayout(new GridLayout());		
-		//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		//setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));		
+		setLayout(new BorderLayout());
 		
-		addJTextArea();
-		addButton();
-		addImage();
-			
+	    Panel panelLeft = new Panel();
+	    panelLeft.setLayout(new BorderLayout());
+	    panelLeft.add(getJTextArea(),BorderLayout.NORTH);
+		//box1.add(Box.createVerticalGlue());
+	    panelLeft.add(getThumbPanel(),BorderLayout.CENTER);
+		add(panelLeft,BorderLayout.WEST);
+		
+		Panel panelMiddle = new Panel();
+		panelMiddle.setLayout(new BorderLayout());
+		panelMiddle.add(getButtonPanel(), BorderLayout.NORTH);
+		panelMiddle.add(getImagePanel(), BorderLayout.CENTER);
+		
+		hTranslate_min = 0;
+		hTranslate_max = 0;
+		horizontalTranslationSlider = new JSlider(JSlider.HORIZONTAL,
+		hTranslate_min , hTranslate_max, 0);
+		horizontalTranslationSlider.addChangeListener(new ChangeListener() {
+		  public void stateChanged(ChangeEvent ce){
+			  int currentValue = horizontalTranslationSlider.getValue();
+			  controller.performCommand(new TranslationCommand(imagePerspective1, currentValue-h_oldValue, 0));
+			  h_oldValue = currentValue;
+		  }
+		});
+		
+		
+		panelMiddle.add(horizontalTranslationSlider,BorderLayout.SOUTH);
+						
+		vTranslate_min = 0;
+		vTranslate_max = 0;
+		verticalTranslationSlider = new JSlider(JSlider.VERTICAL,
+		vTranslate_min , vTranslate_max, 0);
+		verticalTranslationSlider.setInverted(true);
+		verticalTranslationSlider.addChangeListener(new ChangeListener() {
+		  public void stateChanged(ChangeEvent ce){
+			  int currentValue = verticalTranslationSlider.getValue();
+			  controller.performCommand(new TranslationCommand(imagePerspective1, 0, (currentValue-v_oldValue)));
+			  v_oldValue = currentValue;
+		  }
+		  });
+		panelMiddle.add(verticalTranslationSlider, BorderLayout.EAST);
+		add(panelMiddle, BorderLayout.CENTER);
+		
 		addMenus();
 				
-		//System.out.println(imgPanel.getWidth() + "x" + imgPanel.getHeight());
-		
 		validate();
 		
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(500, 500);
+		setSize(800, 600);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		imgPanel.setFocusable(true);
 	}
 	
 	// --------------------------------------------------
@@ -83,43 +127,67 @@ public class MainWindowImagePanel extends JFrame {
 		}
 	}
 	
-	private void addImage() {
-		PerpectiveChanged listener = new PerpectiveChanged();
-		image = PerspectiveFactory.makePerspective();
-		image.imageChanged.addObserver(listener);
-		image.zoomChanged.addObserver(listener);
-		image.positionChanged.addObserver(listener);
-		image.setImage("vincent.jpg");
-				
-		ImagePanel imgPanel = new ImagePanel(image, 150, 150);
-		//imgPanel.setSize(100, 100);
-		add(imgPanel);
+	private JPanel getImagePanel() {
+		imgPanel = new ImagePanel(imagePerspective1, 400, 400);
 		
+		imgPanel.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
 		imgPanel.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(image, -1 * event.getWheelRotation() * 4));
+				controller.performCommand(new ZoomCommand(imagePerspective1, -1 * event.getWheelRotation() * 4));
+				updateSlidersMaxValues();
 			}
 		});
+		
+		return imgPanel;
 	}
 	
-	private void addJTextArea() {
+	private void updateSlidersMaxValues() {
+		int zoom;
+		zoom = (int) imagePerspective1.getZoom();
+		horizontalTranslationSlider.setMaximum(zoom < 0 ? 0 : zoom);
+		verticalTranslationSlider.setMaximum(zoom < 0 ? 0 : zoom);
+	}
+	
+	private void initImagePerspective() {
+		PerpectiveChanged listener = new PerpectiveChanged();
+		imagePerspective1 = PerspectiveFactory.makePerspective();
+		imagePerspective1.imageChanged.addObserver(listener);
+		imagePerspective1.zoomChanged.addObserver(listener);
+		imagePerspective1.positionChanged.addObserver(listener);
+		imagePerspective1.setImage("vincent.jpg");
+	}
+	
+	private JPanel getThumbPanel() {
+		initImagePerspective();
+		imageThumbPerspective = PerspectiveFactory.makePerspective(imagePerspective1.getImage());
+	
+		ImagePanel imgThumb = new ImagePanel(imageThumbPerspective, THUMB_WIDTH, THUMB_HEIGHT);
+		imgThumb.setAlignmentX(Component.LEFT_ALIGNMENT);
+		imgThumb.setPreferredSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
+		imgThumb.setMaximumSize(imgThumb.getPreferredSize());
+		imgThumb.setMinimumSize(imgThumb.getPreferredSize());
+		imgThumb.setSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
+		return imgThumb;
+	}
+	
+	private JPanel getJTextArea() {
 		JPanel panel = new JPanel();
-		
+		panel.setBackground(Color.BLACK);	
 		panel.add(imageView = new JTextArea(5, 20));
-		add (panel);
 		imageView.setEditable(false);
+		return panel;
 	}
 	
-	private void addButton() {
+	private JPanel getButtonPanel() {
 		JPanel panel = new JPanel();
-		
+		panel.setBackground(Color.BLUE);	
 		panel.add(button1 = new JButton("Image"));
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ChangeImageCommand(image, "image" + ++n + ".png"));
+				controller.performCommand(new ChangeImageCommand(imagePerspective1, "image" + ++n + ".png"));
 			}
 		});
 		
@@ -127,7 +195,7 @@ public class MainWindowImagePanel extends JFrame {
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ZoomCommand(image, 0.5));
+				controller.performCommand(new ZoomCommand(imagePerspective1, 0.5));
 			}
 		});
 		
@@ -135,7 +203,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonLeft.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(image, -10, 0));
+				controller.performCommand(new TranslationCommand(imagePerspective1, -10, 0));
 			}
 		});
 		
@@ -143,7 +211,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonRight.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(image, 10, 0));
+				controller.performCommand(new TranslationCommand(imagePerspective1, 10, 0));
 			}
 		});
 		
@@ -151,7 +219,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(image, 0, -10));
+				controller.performCommand(new TranslationCommand(imagePerspective1, 0, -10));
 			}
 		});
 		
@@ -159,10 +227,10 @@ public class MainWindowImagePanel extends JFrame {
 		buttonDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(image, 0, 10));
+				controller.performCommand(new TranslationCommand(imagePerspective1, 0, 10));
 			}
 		});
-		
+
 		panel.add(undoButton = new JButton("Annuler"));
 		undoButton.addActionListener(new ActionListener() {
 			@Override
@@ -180,8 +248,10 @@ public class MainWindowImagePanel extends JFrame {
 				controller.redo();
 			}
 		});
-		
-		add (panel);
+		panel.setAlignmentX(JButton.RIGHT_ALIGNMENT);
+	
+		panel.setMaximumSize(panel.getPreferredSize());
+		return panel;
 	}
 	
 	/**
@@ -220,9 +290,26 @@ public class MainWindowImagePanel extends JFrame {
 	private JPopupMenu undoMenu;
 	private LinkedList<JMenuItem> undoMenuItems;
 	
+	private JSlider verticalTranslationSlider;
+	private int vTranslate_max = 0;
+	private int vTranslate_min = 0;
+	private int v_oldValue = 0;
+	
+	private JSlider horizontalTranslationSlider;
+	private int hTranslate_max = 0;
+	private int hTranslate_min = 0;
+	private int h_oldValue = 0;	
+	
+	private ImagePanel imgPanel;
+	
 	private JTextArea imageView;
-	private Perspective image;
-	private Controller controller = new Controller();;
+	private Perspective imagePerspective1;
+	private Perspective imageThumbPerspective;
+	
+	private Controller controller = new Controller();
+	
+	private static final int THUMB_WIDTH = 200;
+	private static final int THUMB_HEIGHT = 200;
 	
 	// --------------------------------------------------
 	// Classe(s) interne(s)
@@ -231,10 +318,13 @@ public class MainWindowImagePanel extends JFrame {
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
-			imageView.setText("Image: " + image.getImage()
-				+ "\nZoom: " + image.getZoom()
-				+ "\nPosition: (" + image.getPosition().getX() + ", " + image.getPosition().getX() + ")");
+			imageView.setText("Image: " + imagePerspective1.getImage()
+				+ "\nZoom: " + imagePerspective1.getZoom()
+				+ "\nPosition: (" + imagePerspective1.getPosition().getX() + ", " + imagePerspective1.getPosition().getY() + ")");
+			validate();
 			repaint();
+			if (imgPanel != null)
+				imgPanel.repaint();
 		}
 	}
 	

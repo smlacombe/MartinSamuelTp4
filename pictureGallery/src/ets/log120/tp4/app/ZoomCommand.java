@@ -26,7 +26,8 @@ public class ZoomCommand
 	
 	@Override
 	public void doCommand() {
-		subject.setZoom(subject.getZoom() + augmentation);
+		if (subject.getZoom() + augmentation >= 0)
+			subject.setZoom(subject.getZoom() + augmentation);
 	}
 
 	@Override
