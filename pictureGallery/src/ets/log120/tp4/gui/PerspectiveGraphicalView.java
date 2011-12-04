@@ -55,41 +55,54 @@ public class PerspectiveGraphicalView extends JPanel {
 	private JToolBar getToolBar() {
 		JToolBar toolBar = new JToolBar();
 		
-		JButton button1 = new JButton(new ImageIcon("icon/zoom-in.png"));
-		button1.addActionListener(new ActionListener() {
+		JButton zoomInButton = new JButton(new ImageIcon("icon/zoom-in.png"));
+		zoomInButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, 0.2 * perspective.getZoom()));
 			}
 		});
-		toolBar.add(button1);
+		toolBar.add(zoomInButton);
 		
-		JButton button2 = new JButton(new ImageIcon("icon/zoom-out.png"));
-		button2.addActionListener(new ActionListener() {
+		JButton zoomOutButton = new JButton(new ImageIcon("icon/zoom-out.png"));
+		zoomOutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, -0.2 * perspective.getZoom()));
 			}
 		});
-		toolBar.add(button2);
+		toolBar.add(zoomOutButton);
 		
-		JButton button3 = new JButton(new ImageIcon("icon/zoom-original.png"));
-		button3.addActionListener(new ActionListener() {
+		JButton zoomOriginalButton = new JButton(new ImageIcon("icon/zoom-original.png"));
+		zoomOriginalButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, 1 - perspective.getZoom()));
 			}
 		});
-		toolBar.add(button3);
+		toolBar.add(zoomOriginalButton);
 		
-		JButton button4 = new JButton(new ImageIcon("icon/zoom-fit-best.png"));
-		button4.addActionListener(new ActionListener() {
+		JButton zoomFitBestButton = new JButton(new ImageIcon("icon/zoom-fit-best.png"));
+		zoomFitBestButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "Not implemented yet");
+				BufferedImage image = null;
+				try {
+					image = ImageIO.read(new File(perspective.getImage()));
+					double bestZoom = 1.0;
+					
+					if (imageComponent.getSize().getHeight() < imageComponent.getSize().getWidth())
+						bestZoom = imageComponent.getSize().getHeight() / image.getHeight();
+					else
+						bestZoom = imageComponent.getSize().getWidth() / image.getWidth();
+					
+					controller.performCommand(new ZoomCommand(perspective, bestZoom - perspective.getZoom()));
+				} catch (IOException e) {
+					// Nothing to do
+				}
 			}
 		});
-		toolBar.add(button4);
+		toolBar.add(zoomFitBestButton);
 		
 		return toolBar;
 	}

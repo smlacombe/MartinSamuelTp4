@@ -22,6 +22,11 @@ public class ImageComponent extends JComponent {
 	// --------------------------------------------------
 	// Accesseur(s)
 	// --------------------------------------------------
+	
+	@Override
+	public Dimension getSize() {
+		return displaySize;
+	}
 
 	@Override
 	public Dimension getMinimumSize() {
