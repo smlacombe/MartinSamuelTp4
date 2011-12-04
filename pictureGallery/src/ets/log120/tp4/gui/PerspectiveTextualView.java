@@ -15,12 +15,6 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 		addProperty(0, 0, "Nom :", nameField = new javax.swing.JTextField("test"));
 		addProperty(1, 0, "Zoom :", zoomField = new javax.swing.JTextField(10));
 		
-		System.out.println(this.getPreferredSize());
-		System.out.println(nameField.getSize());
-		System.out.println();
-		
-		
-		
 		setMaximumSize(new java.awt.Dimension(getMaximumSize().width, getPreferredSize().height));
 	}
 
