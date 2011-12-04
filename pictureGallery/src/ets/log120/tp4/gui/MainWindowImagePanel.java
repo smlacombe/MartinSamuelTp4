@@ -133,7 +133,7 @@ public class MainWindowImagePanel extends JFrame {
 	}
 	
 	private JPanel getImagePanel() {
-		graphicalView = new PerspectiveGraphicalView(imagePerspective, 500, 500);
+		graphicalView = new PerspectiveGraphicalView(controller, 400, 400);
 		
 		graphicalView.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
@@ -141,7 +141,7 @@ public class MainWindowImagePanel extends JFrame {
 		graphicalView.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.05));
+				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.05 * imagePerspective.getZoom()));
 				//updateScrollbarsMaxValue();
 			}
 		});
@@ -214,7 +214,7 @@ public class MainWindowImagePanel extends JFrame {
 		imagePerspective.positionChanged.addObserver(listener);
 		imagePerspective.setImage("vincent.jpg");
 	}
-	
+	/*
 	private JPanel getButtonPanel() {
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.BLUE);	
@@ -288,6 +288,7 @@ public class MainWindowImagePanel extends JFrame {
 		panel.setMaximumSize(panel.getPreferredSize());
 		return panel;
 	}
+	*/
 	
 	/**
 	 * Initialise le fichier de propriétés contenant le texte à afficher à l'utilisateur.
