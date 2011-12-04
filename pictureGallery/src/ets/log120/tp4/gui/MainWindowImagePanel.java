@@ -57,16 +57,16 @@ public class MainWindowImagePanel extends JFrame {
 		panelLeft.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	    panelLeft.add(textualView = new PerspectiveTextualView());
 	    panelLeft.add(javax.swing.Box.createVerticalGlue());
-		panelLeft.add(graphicalView = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
+		panelLeft.add(thumbnailGraphicalView = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
 		add(panelLeft,BorderLayout.WEST);
-		
-		initImagePerspective();
 		
 		Panel panelMiddle = new Panel();
 		panelMiddle.setLayout(new BorderLayout());
-		panelMiddle.add(getButtonPanel(), BorderLayout.NORTH);
+		//panelMiddle.add(getButtonPanel(), BorderLayout.NORTH);
 		panelMiddle.add(getImagePanel(), BorderLayout.CENTER);
 		
+		initImagePerspective();
+		/*
 		hTranslate_min = 0;
 		hTranslate_max = 0;
 		horizontalTranslationScrollbar = new JScrollBar(JScrollBar.HORIZONTAL,0,0,hTranslate_min, hTranslate_max);
@@ -97,6 +97,7 @@ public class MainWindowImagePanel extends JFrame {
 		  }
 		  });
 		panelMiddle.add(verticalTranslationScrollbar, BorderLayout.EAST);
+		*/
 		add(panelMiddle, BorderLayout.CENTER);
 		
 		addMenus();
@@ -108,7 +109,7 @@ public class MainWindowImagePanel extends JFrame {
 		setSize(800, 600);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		imgPanel.setFocusable(true);
+		graphicalView.setFocusable(true);
 	}
 	
 	// --------------------------------------------------
@@ -132,28 +133,29 @@ public class MainWindowImagePanel extends JFrame {
 	}
 	
 	private JPanel getImagePanel() {
-		imgPanel = new PerspectiveGraphicalView(imagePerspective, 400, 400);
+		graphicalView = new PerspectiveGraphicalView(imagePerspective, 500, 500);
 		
-		imgPanel.setBackground(Color.RED);		
+		graphicalView.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
-		imgPanel.addMouseWheelListener(new MouseWheelListener() {
+		
+		graphicalView.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.01));
-				updateScrollbarsMaxValue();
+				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.05));
+				//updateScrollbarsMaxValue();
 			}
 		});
 		
-		return imgPanel;
+		return graphicalView;
 	}
-	
+	/*
 	private void updateScrollbarsMaxValue() {
 		double zoom;
 		zoom = imagePerspective.getZoom();
 		int maxH;
 		int maxV;
-		int panelImageHeightDiff = imgPanel.getHeight() - imgPanel.getCurrentImageHeight();
-		int panelImageWidthDiff = imgPanel.getWidth() - imgPanel.getCurrentImageWidth();
+		int panelImageHeightDiff = graphicalView.getHeight() - graphicalView.getCurrentImageHeight();
+		int panelImageWidthDiff = graphicalView.getWidth() - graphicalView.getCurrentImageWidth();
 		
 		if (panelImageWidthDiff >= 0)
 			maxH = 0;
@@ -170,7 +172,8 @@ public class MainWindowImagePanel extends JFrame {
 		//System.out.println("maxh: " + maxH + " " + "maxv: " + maxV + " " + "valv: " + verticalTranslationSlider.getValue() + " " + "valh: " + horizontalTranslationSlider.getValue() + " ");
 
 	}
-	
+	*/
+	/*
 	public String loadFile (Frame f, String title, String defDir, String fileType) {
 	    FileDialog fd = new FileDialog(f, title, FileDialog.LOAD);
 	    fd.setFile(fileType);
@@ -180,6 +183,7 @@ public class MainWindowImagePanel extends JFrame {
 	    
 	    return fd.getFile();
     }
+    */
 	
 	private void initImagePerspective() {
 		thumbnailPerspective = PerspectiveFactory.makePerspective();
@@ -192,16 +196,20 @@ public class MainWindowImagePanel extends JFrame {
 				} catch (IOException e) {
 					// Nothing to do
 				} finally {
-					graphicalView.setImage(image);	
+					thumbnailGraphicalView.setImage(image);	
 				}
 			}
 		});
 		
-		thumbnailPerspective.setImage("vincent.jpg");
+		thumbnailPerspective.setImage("petiteImage.png");
+		//thumbnailPerspective.setImage("imageEnHauteur.png");
+		//thumbnailPerspective.setImage("cplusplus.png");
+		//thumbnailPerspective.setImage("vincent.jpg");
 		
 		
 		PerpectiveChanged listener = new PerpectiveChanged();
 		imagePerspective = PerspectiveFactory.makePerspective();
+		imagePerspective.imageChanged.addObserver(listener);
 		imagePerspective.zoomChanged.addObserver(listener);
 		imagePerspective.positionChanged.addObserver(listener);
 		imagePerspective.setImage("vincent.jpg");
@@ -327,13 +335,12 @@ public class MainWindowImagePanel extends JFrame {
 	private int hTranslate_min = 0;
 	private int h_oldValue = 0;	
 	
-	private PerspectiveGraphicalView imgPanel;
-	
 	private Perspective imagePerspective;
 	private Perspective thumbnailPerspective;
 	
 	private PerspectiveTextualView textualView;
-	private ImageComponent graphicalView;
+	private PerspectiveGraphicalView graphicalView;
+	private ImageComponent thumbnailGraphicalView;
 	
 	private Controller controller = new Controller();
 	
@@ -348,6 +355,7 @@ public class MainWindowImagePanel extends JFrame {
 		@Override
 		public void update(Observable arg0, Object arg1) {
 			textualView.update(imagePerspective);
+			graphicalView.setPerspective(imagePerspective);
 		}
 	}
 	
