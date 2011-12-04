@@ -75,7 +75,7 @@ public class MainWindowImagePanel extends JFrame {
 			  int currentValue = horizontalTranslationScrollbar.getValue();
 			  
 			  //if (currentValue != horizontalTranslationSlider.getMaximum());
-			  	controller.performCommand(new TranslationCommand(imagePerspective1, -(currentValue-h_oldValue), 0));
+			  	controller.performCommand(new TranslationCommand(imagePerspective, -(currentValue-h_oldValue), 0));
 			  
 			  h_oldValue = currentValue;
 			  System.out.println("h_value " + currentValue);
@@ -92,7 +92,7 @@ public class MainWindowImagePanel extends JFrame {
 		verticalTranslationScrollbar.addAdjustmentListener(new AdjustmentListener() {
 		  public void adjustmentValueChanged(AdjustmentEvent ce){
 			  int currentValue = verticalTranslationScrollbar.getValue();
-			  controller.performCommand(new TranslationCommand(imagePerspective1, 0, -(currentValue-v_oldValue)));
+			  controller.performCommand(new TranslationCommand(imagePerspective, 0, -(currentValue-v_oldValue)));
 			  v_oldValue = currentValue;
 		  }
 		  });
@@ -132,14 +132,14 @@ public class MainWindowImagePanel extends JFrame {
 	}
 	
 	private JPanel getImagePanel() {
-		imgPanel = new PerspectiveGraphicalView(imagePerspective1, 400, 400);
+		imgPanel = new PerspectiveGraphicalView(imagePerspective, 400, 400);
 		
 		imgPanel.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
 		imgPanel.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(imagePerspective1, -1 * event.getWheelRotation() * 0.01));
+				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.01));
 				updateScrollbarsMaxValue();
 			}
 		});
@@ -149,7 +149,7 @@ public class MainWindowImagePanel extends JFrame {
 	
 	private void updateScrollbarsMaxValue() {
 		double zoom;
-		zoom = imagePerspective1.getZoom();
+		zoom = imagePerspective.getZoom();
 		int maxH;
 		int maxV;
 		int panelImageHeightDiff = imgPanel.getHeight() - imgPanel.getCurrentImageHeight();
@@ -182,14 +182,13 @@ public class MainWindowImagePanel extends JFrame {
     }
 	
 	private void initImagePerspective() {
-		PerpectiveChanged listener = new PerpectiveChanged();
-		imagePerspective1 = PerspectiveFactory.makePerspective();
-		imagePerspective1.imageChanged.addObserver(new Observer() {
+		thumbnailPerspective = PerspectiveFactory.makePerspective();
+		thumbnailPerspective.imageChanged.addObserver(new Observer() {
 			@Override
 			public void update(Observable arg0, Object arg1) {
 				BufferedImage image = null;
 				try {
-					image = ImageIO.read(new File(imagePerspective1.getImage()));
+					image = ImageIO.read(new File(thumbnailPerspective.getImage()));
 				} catch (IOException e) {
 					// Nothing to do
 				} finally {
@@ -197,9 +196,15 @@ public class MainWindowImagePanel extends JFrame {
 				}
 			}
 		});
-		imagePerspective1.zoomChanged.addObserver(listener);
-		imagePerspective1.positionChanged.addObserver(listener);
-		imagePerspective1.setImage("vincent.jpg");
+		
+		thumbnailPerspective.setImage("vincent.jpg");
+		
+		
+		PerpectiveChanged listener = new PerpectiveChanged();
+		imagePerspective = PerspectiveFactory.makePerspective();
+		imagePerspective.zoomChanged.addObserver(listener);
+		imagePerspective.positionChanged.addObserver(listener);
+		imagePerspective.setImage("vincent.jpg");
 	}
 	
 	private JPanel getButtonPanel() {
@@ -209,7 +214,7 @@ public class MainWindowImagePanel extends JFrame {
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ChangeImageCommand(imagePerspective1, "image" + ++n + ".png"));
+				controller.performCommand(new ChangeImageCommand(imagePerspective, "image" + ++n + ".png"));
 			}
 		});
 		
@@ -217,7 +222,7 @@ public class MainWindowImagePanel extends JFrame {
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ZoomCommand(imagePerspective1, 0.5));
+				controller.performCommand(new ZoomCommand(imagePerspective, 0.5));
 			}
 		});
 		
@@ -225,7 +230,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonLeft.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective1, -10, 0));
+				controller.performCommand(new TranslationCommand(imagePerspective, -10, 0));
 			}
 		});
 		
@@ -233,7 +238,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonRight.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective1, 10, 0));
+				controller.performCommand(new TranslationCommand(imagePerspective, 10, 0));
 			}
 		});
 		
@@ -241,7 +246,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective1, 0, -10));
+				controller.performCommand(new TranslationCommand(imagePerspective, 0, -10));
 			}
 		});
 		
@@ -249,7 +254,7 @@ public class MainWindowImagePanel extends JFrame {
 		buttonDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective1, 0, 10));
+				controller.performCommand(new TranslationCommand(imagePerspective, 0, 10));
 			}
 		});
 
@@ -324,8 +329,8 @@ public class MainWindowImagePanel extends JFrame {
 	
 	private PerspectiveGraphicalView imgPanel;
 	
-	private Perspective imagePerspective1;
-	private Perspective imageThumbPerspective;
+	private Perspective imagePerspective;
+	private Perspective thumbnailPerspective;
 	
 	private PerspectiveTextualView textualView;
 	private ImageComponent graphicalView;
@@ -342,7 +347,7 @@ public class MainWindowImagePanel extends JFrame {
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
-			textualView.update(imagePerspective1);
+			textualView.update(imagePerspective);
 		}
 	}
 	
