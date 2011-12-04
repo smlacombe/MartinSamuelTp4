@@ -201,19 +201,24 @@ public class MainWindowImagePanel extends JFrame {
 			}
 		});
 		
-		thumbnailPerspective.setImage("petiteImage.png");
-		//thumbnailPerspective.setImage("imageEnHauteur.png");
-		//thumbnailPerspective.setImage("cplusplus.png");
-		//thumbnailPerspective.setImage("vincent.jpg");
-		
-		
 		PerpectiveChanged listener = new PerpectiveChanged();
 		imagePerspective = PerspectiveFactory.makePerspective();
 		imagePerspective.imageChanged.addObserver(listener);
+		imagePerspective.imageChanged.addObserver(new Observer() {
+			@Override
+			public void update(Observable arg0, Object arg1) {
+				thumbnailPerspective.setImage(imagePerspective.getImage());
+			}
+		});
 		imagePerspective.zoomChanged.addObserver(listener);
 		imagePerspective.positionChanged.addObserver(listener);
-		imagePerspective.setImage("vincent.jpg");
+		
+		//imagePerspective.setImage("vincent.jpg");
+		//imagePerspective.setImage("petiteImage.png");
+		//imagePerspective.setImage("imageEnHauteur.png");
+		imagePerspective.setImage("cplusplus.png");
 	}
+	
 	/*
 	private JPanel getButtonPanel() {
 		JPanel panel = new JPanel();
