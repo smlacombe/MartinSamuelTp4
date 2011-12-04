@@ -3,6 +3,7 @@ package ets.log120.tp4.gui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
@@ -22,15 +23,15 @@ public class ImagePanel extends JPanel {
 	public ImagePanel(Perspective perspective, int width, int height) {
 	       try {                
 	    	  setPerspective(perspective);
-	    	  this.width = width;
-	    	  this.height = height;
+	    	  this.originalWidth = width;
+	    	  this.originalHeight = height;
 	    	 
 	    	 // this.setPreferredSize(new Dimension(width,height));
 	    	  //this.setMaximumSize(this.getPreferredSize());
 	    	 // this.setMinimumSize(this.getPreferredSize());
 	    	 // this.setSize(new Dimension(width,height));
 	    	  
-	          image = ImageIO.read(new File(perspective.getImage()));
+	          originalImage = ImageIO.read(new File(perspective.getImage()));
 	          //this.setBackground(java.awt.Color.RED);
 	       } catch (IOException ex) {
 	            // handle exception...
@@ -45,6 +46,16 @@ public class ImagePanel extends JPanel {
 	private void setPerspective(Perspective perspective) {
 		this.perspective = perspective;
 	}
+	
+	public int getCurrentImageHeight() {
+		return currentImageHeight;
+		
+	}
+	
+	public int getCurrentImageWidth() {
+		return currentImageWidth;
+		
+	}
 
 	// --------------------------------------------------
 	// Méthodes(s)
@@ -57,8 +68,8 @@ public class ImagePanel extends JPanel {
     	
     	int positionToShowX = perspective.getPosition().x;
     	int positionToShowY = perspective.getPosition().y;
-    	int subImageWidth = (int) (image.getWidth() - perspective.getZoom());
-    	int subImageHeight = (int) (image.getHeight() - perspective.getZoom()); 
+    	currentImageWidth = (int) (originalImage.getWidth() * perspective.getZoom());
+    	currentImageHeight = (int) (originalImage.getHeight() * perspective.getZoom()); 
        	//AffineTransform transformationZoom = AffineTransform.getScaleInstance(perspective.getZoom(), perspective.getZoom());
         
     	//g2.translate(perspective.getPosition().x, perspective.getPosition().y);
@@ -71,16 +82,19 @@ public class ImagePanel extends JPanel {
     	else
     		g2.drawImage(image, 0, 0, this);
     	*/
-    	g.drawImage(image.getSubimage(positionToShowX, positionToShowY, subImageWidth, subImageHeight), 0, 0, width, height, this);
-    	System.out.println("ff " + subImageWidth  + " y " + subImageHeight);
+    	g.translate(positionToShowX, positionToShowY);
+    	g.drawImage(originalImage.getScaledInstance(currentImageWidth, currentImageHeight, Image.SCALE_FAST), 0, 0, null);
+    	//g.drawImage(image.getSubimage(positionToShowX, positionToShowY, subImageWidth, subImageHeight), 0, 0, width, height, this);
 	}
  	
 	// --------------------------------------------------
 	// Attribut(s)
 	// --------------------------------------------------
 		
-	private java.awt.image.BufferedImage image;
+	private java.awt.image.BufferedImage originalImage;
+	private int currentImageWidth;
+	private int currentImageHeight;
 	private Perspective perspective;
-	private int height;
-	private int width;
+	private int originalHeight;
+	private int originalWidth;
 }
