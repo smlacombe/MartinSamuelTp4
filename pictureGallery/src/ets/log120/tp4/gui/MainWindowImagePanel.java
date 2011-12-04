@@ -4,12 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -28,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
@@ -67,32 +72,34 @@ public class MainWindowImagePanel extends JFrame {
 		
 		hTranslate_min = 0;
 		hTranslate_max = 0;
-		horizontalTranslationSlider = new JSlider(JSlider.HORIZONTAL,
-		hTranslate_min , hTranslate_max, 0);
-		horizontalTranslationSlider.addChangeListener(new ChangeListener() {
-		  public void stateChanged(ChangeEvent ce){
-			  int currentValue = horizontalTranslationSlider.getValue();
-			  controller.performCommand(new TranslationCommand(imagePerspective1, currentValue-h_oldValue, 0));
+		horizontalTranslationScrollbar = new JScrollBar(JScrollBar.HORIZONTAL,0,0,hTranslate_min, hTranslate_max);
+		horizontalTranslationScrollbar.addAdjustmentListener((new AdjustmentListener() {
+		  public void adjustmentValueChanged(AdjustmentEvent ce) {
+			  int currentValue = horizontalTranslationScrollbar.getValue();
+			  
+			  //if (currentValue != horizontalTranslationSlider.getMaximum());
+			  	controller.performCommand(new TranslationCommand(imagePerspective1, -(currentValue-h_oldValue), 0));
+			  
 			  h_oldValue = currentValue;
+			  System.out.println("h_value " + currentValue);
+			  System.out.println(currentValue != horizontalTranslationScrollbar.getMaximum());
 		  }
-		});
+		}));
 		
 		
-		panelMiddle.add(horizontalTranslationSlider,BorderLayout.SOUTH);
+		panelMiddle.add(horizontalTranslationScrollbar,BorderLayout.SOUTH);
 						
 		vTranslate_min = 0;
 		vTranslate_max = 0;
-		verticalTranslationSlider = new JSlider(JSlider.VERTICAL,
-		vTranslate_min , vTranslate_max, 0);
-		verticalTranslationSlider.setInverted(true);
-		verticalTranslationSlider.addChangeListener(new ChangeListener() {
-		  public void stateChanged(ChangeEvent ce){
-			  int currentValue = verticalTranslationSlider.getValue();
-			  controller.performCommand(new TranslationCommand(imagePerspective1, 0, (currentValue-v_oldValue)));
+		verticalTranslationScrollbar = new JScrollBar(JScrollBar.VERTICAL,0,0,vTranslate_min, vTranslate_max);
+		verticalTranslationScrollbar.addAdjustmentListener(new AdjustmentListener() {
+		  public void adjustmentValueChanged(AdjustmentEvent ce){
+			  int currentValue = verticalTranslationScrollbar.getValue();
+			  controller.performCommand(new TranslationCommand(imagePerspective1, 0, -(currentValue-v_oldValue)));
 			  v_oldValue = currentValue;
 		  }
 		  });
-		panelMiddle.add(verticalTranslationSlider, BorderLayout.EAST);
+		panelMiddle.add(verticalTranslationScrollbar, BorderLayout.EAST);
 		add(panelMiddle, BorderLayout.CENTER);
 		
 		addMenus();
@@ -135,20 +142,47 @@ public class MainWindowImagePanel extends JFrame {
 		imgPanel.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(imagePerspective1, -1 * event.getWheelRotation() * 4));
-				updateSlidersMaxValues();
+				controller.performCommand(new ZoomCommand(imagePerspective1, -1 * event.getWheelRotation() * 0.01));
+				updateScrollbarsMaxValue();
 			}
 		});
 		
 		return imgPanel;
 	}
 	
-	private void updateSlidersMaxValues() {
-		int zoom;
-		zoom = (int) imagePerspective1.getZoom();
-		horizontalTranslationSlider.setMaximum(zoom < 0 ? 0 : zoom);
-		verticalTranslationSlider.setMaximum(zoom < 0 ? 0 : zoom);
+	private void updateScrollbarsMaxValue() {
+		double zoom;
+		zoom = imagePerspective1.getZoom();
+		int maxH;
+		int maxV;
+		int panelImageHeightDiff = imgPanel.getHeight() - imgPanel.getCurrentImageHeight();
+		int panelImageWidthDiff = imgPanel.getWidth() - imgPanel.getCurrentImageWidth();
+		
+		if (panelImageWidthDiff >= 0)
+			maxH = 0;
+		else
+			maxH = Math.abs(panelImageWidthDiff);
+
+		if (panelImageHeightDiff >= 0)
+			maxV = 0;
+		else
+			maxV = Math.abs(panelImageHeightDiff);
+		
+		horizontalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxH);
+		verticalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxV);
+		//System.out.println("maxh: " + maxH + " " + "maxv: " + maxV + " " + "valv: " + verticalTranslationSlider.getValue() + " " + "valh: " + horizontalTranslationSlider.getValue() + " ");
+
 	}
+	
+	public String loadFile (Frame f, String title, String defDir, String fileType) {
+	    FileDialog fd = new FileDialog(f, title, FileDialog.LOAD);
+	    fd.setFile(fileType);
+	    fd.setDirectory(defDir);
+	    fd.setLocation(50, 50);
+	    fd.show();
+	    
+	    return fd.getFile();
+    }
 	
 	private void initImagePerspective() {
 		PerpectiveChanged listener = new PerpectiveChanged();
@@ -165,9 +199,9 @@ public class MainWindowImagePanel extends JFrame {
 	
 		ImagePanel imgThumb = new ImagePanel(imageThumbPerspective, THUMB_WIDTH, THUMB_HEIGHT);
 		imgThumb.setAlignmentX(Component.LEFT_ALIGNMENT);
-		imgThumb.setPreferredSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
-		imgThumb.setMaximumSize(imgThumb.getPreferredSize());
-		imgThumb.setMinimumSize(imgThumb.getPreferredSize());
+		//imgThumb.setPreferredSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
+		//imgThumb.setMaximumSize(imgThumb.getPreferredSize());
+		//imgThumb.setMinimumSize(imgThumb.getPreferredSize());
 		imgThumb.setSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
 		return imgThumb;
 	}
@@ -290,12 +324,12 @@ public class MainWindowImagePanel extends JFrame {
 	private JPopupMenu undoMenu;
 	private LinkedList<JMenuItem> undoMenuItems;
 	
-	private JSlider verticalTranslationSlider;
+	private JScrollBar verticalTranslationScrollbar;
 	private int vTranslate_max = 0;
 	private int vTranslate_min = 0;
 	private int v_oldValue = 0;
 	
-	private JSlider horizontalTranslationSlider;
+	private JScrollBar horizontalTranslationScrollbar;
 	private int hTranslate_max = 0;
 	private int hTranslate_min = 0;
 	private int h_oldValue = 0;	
@@ -321,7 +355,7 @@ public class MainWindowImagePanel extends JFrame {
 			imageView.setText("Image: " + imagePerspective1.getImage()
 				+ "\nZoom: " + imagePerspective1.getZoom()
 				+ "\nPosition: (" + imagePerspective1.getPosition().getX() + ", " + imagePerspective1.getPosition().getY() + ")");
-			validate();
+			//validate();
 			repaint();
 			if (imgPanel != null)
 				imgPanel.repaint();
