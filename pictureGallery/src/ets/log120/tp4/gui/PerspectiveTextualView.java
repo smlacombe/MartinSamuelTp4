@@ -12,8 +12,9 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 		super(new java.awt.GridBagLayout());
 		this.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		addProperty(0, 0, "Nom :", nameField = new javax.swing.JTextField("test"));
-		addProperty(1, 0, "Zoom :", zoomField = new javax.swing.JTextField(10));
+		addProperty(0, 0, "Nom :",      nameField     = new javax.swing.JTextField(15));
+		addProperty(1, 0, "Zoom :",     zoomField     = new javax.swing.JTextField(15));
+		addProperty(1, 0, "Position :", positionField = new javax.swing.JTextField(15));
 		
 		System.out.println(this.getPreferredSize());
 		System.out.println(nameField.getSize());
@@ -35,6 +36,7 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 	public void update(Perspective p) {
 		nameField.setText(p.getImage());
 		zoomField.setText(Double.toString(p.getZoom()));
+		positionField.setText(p.getPosition().toString());
 	}
 	
 	public void foo() {
@@ -48,7 +50,6 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 	private void addProperty(int x, int y, String labelText, javax.swing.JTextField field) {
 		javax.swing.JLabel label = new javax.swing.JLabel(labelText, javax.swing.JLabel.TRAILING);
 		label.setLabelFor(field);
-		label.setBackground(java.awt.Color.GREEN);
 		field.setEditable(false);
 		// field.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 
@@ -75,4 +76,5 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 
 	private javax.swing.JTextField nameField;
 	private javax.swing.JTextField zoomField;
+	private javax.swing.JTextField positionField;
 }

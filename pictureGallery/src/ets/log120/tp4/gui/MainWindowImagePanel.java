@@ -5,10 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,12 +17,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observable;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -33,11 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
-import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
@@ -58,12 +48,13 @@ public class MainWindowImagePanel extends JFrame {
 		//setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));		
 		setLayout(new BorderLayout());
 		
-	    Panel panelLeft = new Panel();
-	    panelLeft.setLayout(new BorderLayout());
-	    panelLeft.add(getJTextArea(),BorderLayout.NORTH);
-		//box1.add(Box.createVerticalGlue());
-	    panelLeft.add(getThumbPanel(),BorderLayout.CENTER);
+		Panel panelLeft = new Panel();
+	    panelLeft.setLayout(new javax.swing.BoxLayout(panelLeft, javax.swing.BoxLayout.PAGE_AXIS));
+	    panelLeft.add(textualView = new PerspectiveTextualView());
+	    panelLeft.add(javax.swing.Box.createVerticalGlue());
+	    panelLeft.add(new JButton("Bouton"));
 		add(panelLeft,BorderLayout.WEST);
+		getThumbPanel();
 		
 		Panel panelMiddle = new Panel();
 		panelMiddle.setLayout(new BorderLayout());
@@ -206,14 +197,6 @@ public class MainWindowImagePanel extends JFrame {
 		return imgThumb;
 	}
 	
-	private JPanel getJTextArea() {
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.BLACK);	
-		panel.add(imageView = new JTextArea(5, 20));
-		imageView.setEditable(false);
-		return panel;
-	}
-	
 	private JPanel getButtonPanel() {
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.BLUE);	
@@ -336,9 +319,10 @@ public class MainWindowImagePanel extends JFrame {
 	
 	private ImagePanel imgPanel;
 	
-	private JTextArea imageView;
 	private Perspective imagePerspective1;
 	private Perspective imageThumbPerspective;
+	
+	private PerspectiveTextualView textualView;
 	
 	private Controller controller = new Controller();
 	
@@ -352,10 +336,7 @@ public class MainWindowImagePanel extends JFrame {
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
-			imageView.setText("Image: " + imagePerspective1.getImage()
-				+ "\nZoom: " + imagePerspective1.getZoom()
-				+ "\nPosition: (" + imagePerspective1.getPosition().getX() + ", " + imagePerspective1.getPosition().getY() + ")");
-			//validate();
+			textualView.update(imagePerspective1);
 			repaint();
 			if (imgPanel != null)
 				imgPanel.repaint();
