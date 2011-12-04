@@ -14,13 +14,13 @@ import javax.swing.JPanel;
 import ets.log120.tp4.app.Perspective;
 
 // http://stackoverflow.com/questions/299495/java-swing-how-to-add-an-image-to-a-jpanel
-public class ImagePanel extends JPanel {
+public class PerspectiveGraphicalView extends JPanel {
 	
 	// --------------------------------------------------
 	// Constructeur(s)
 	// --------------------------------------------------
 	
-	public ImagePanel(Perspective perspective, int width, int height) {
+	public PerspectiveGraphicalView(Perspective perspective, int width, int height) {
 	       try {                
 	    	  setPerspective(perspective);
 	    	  this.originalWidth = width;

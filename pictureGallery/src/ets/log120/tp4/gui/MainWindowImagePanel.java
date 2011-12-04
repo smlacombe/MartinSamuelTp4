@@ -15,11 +15,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Observable;
+import java.util.Observer;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -45,16 +50,17 @@ public class MainWindowImagePanel extends JFrame {
 	public MainWindowImagePanel() {
 		super();
 		initLang();
-		//setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));		
 		setLayout(new BorderLayout());
 		
-		Panel panelLeft = new Panel();
+		JPanel panelLeft = new JPanel();
 	    panelLeft.setLayout(new javax.swing.BoxLayout(panelLeft, javax.swing.BoxLayout.PAGE_AXIS));
+		panelLeft.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	    panelLeft.add(textualView = new PerspectiveTextualView());
 	    panelLeft.add(javax.swing.Box.createVerticalGlue());
-	    panelLeft.add(new JButton("Bouton"));
+		panelLeft.add(graphicalView = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
 		add(panelLeft,BorderLayout.WEST);
-		getThumbPanel();
+		
+		initImagePerspective();
 		
 		Panel panelMiddle = new Panel();
 		panelMiddle.setLayout(new BorderLayout());
@@ -126,7 +132,7 @@ public class MainWindowImagePanel extends JFrame {
 	}
 	
 	private JPanel getImagePanel() {
-		imgPanel = new ImagePanel(imagePerspective1, 400, 400);
+		imgPanel = new PerspectiveGraphicalView(imagePerspective1, 400, 400);
 		
 		imgPanel.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
@@ -178,23 +184,22 @@ public class MainWindowImagePanel extends JFrame {
 	private void initImagePerspective() {
 		PerpectiveChanged listener = new PerpectiveChanged();
 		imagePerspective1 = PerspectiveFactory.makePerspective();
-		imagePerspective1.imageChanged.addObserver(listener);
+		imagePerspective1.imageChanged.addObserver(new Observer() {
+			@Override
+			public void update(Observable arg0, Object arg1) {
+				BufferedImage image = null;
+				try {
+					image = ImageIO.read(new File(imagePerspective1.getImage()));
+				} catch (IOException e) {
+					// Nothing to do
+				} finally {
+					graphicalView.setImage(image);	
+				}
+			}
+		});
 		imagePerspective1.zoomChanged.addObserver(listener);
 		imagePerspective1.positionChanged.addObserver(listener);
 		imagePerspective1.setImage("vincent.jpg");
-	}
-	
-	private JPanel getThumbPanel() {
-		initImagePerspective();
-		imageThumbPerspective = PerspectiveFactory.makePerspective(imagePerspective1.getImage());
-	
-		ImagePanel imgThumb = new ImagePanel(imageThumbPerspective, THUMB_WIDTH, THUMB_HEIGHT);
-		imgThumb.setAlignmentX(Component.LEFT_ALIGNMENT);
-		//imgThumb.setPreferredSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
-		//imgThumb.setMaximumSize(imgThumb.getPreferredSize());
-		//imgThumb.setMinimumSize(imgThumb.getPreferredSize());
-		imgThumb.setSize(new Dimension(THUMB_WIDTH,THUMB_HEIGHT));
-		return imgThumb;
 	}
 	
 	private JPanel getButtonPanel() {
@@ -317,17 +322,18 @@ public class MainWindowImagePanel extends JFrame {
 	private int hTranslate_min = 0;
 	private int h_oldValue = 0;	
 	
-	private ImagePanel imgPanel;
+	private PerspectiveGraphicalView imgPanel;
 	
 	private Perspective imagePerspective1;
 	private Perspective imageThumbPerspective;
 	
 	private PerspectiveTextualView textualView;
+	private ImageComponent graphicalView;
 	
 	private Controller controller = new Controller();
 	
-	private static final int THUMB_WIDTH = 200;
-	private static final int THUMB_HEIGHT = 200;
+	private static final int THUMB_WIDTH = 256;
+	private static final int THUMB_HEIGHT = 256;
 	
 	// --------------------------------------------------
 	// Classe(s) interne(s)
@@ -337,9 +343,6 @@ public class MainWindowImagePanel extends JFrame {
 		@Override
 		public void update(Observable arg0, Object arg1) {
 			textualView.update(imagePerspective1);
-			repaint();
-			if (imgPanel != null)
-				imgPanel.repaint();
 		}
 	}
 	
