@@ -38,6 +38,7 @@ import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.PerspectiveFactory;
+import ets.log120.tp4.app.PerspectiveUtil;
 import ets.log120.tp4.app.ZoomCommand;
 import ets.log120.tp4.app.TranslationCommand;
 
@@ -123,35 +124,39 @@ public class MainWindowImagePanel extends JFrame {
 	}
 	
 	private void initImagePerspective() {
-		thumbnailPerspective = PerspectiveFactory.makePerspective();
-		thumbnailPerspective.imageChanged.addObserver(new Observer() {
-			@Override
-			public void update(Observable arg0, Object arg1) {
-				thumbnailGraphicalView.setImage(thumbnailPerspective.getImage());	
-			}
-		});
-		
-		PerpectiveChanged listener = new PerpectiveChanged();
-		imagePerspective = PerspectiveFactory.makePerspective();
-		imagePerspective.imageChanged.addObserver(listener);
-		imagePerspective.imageChanged.addObserver(new Observer() {
-			@Override
-			public void update(Observable arg0, Object arg1) {
-				thumbnailPerspective.setImage(imagePerspective.getImageName(), imagePerspective.getImage());
-			}
-		});
-		imagePerspective.zoomChanged.addObserver(listener);
-		imagePerspective.positionChanged.addObserver(listener);
-		
-		BufferedImage image = null;
 		try {
 			String str = "vincent.jpg";
 			//String str = "petiteImage.jpg";
 			//String str = "imageEnHauteur.jpg";
 			//String str = "imageEnHauteur.jpg";
 			
-			image = ImageIO.read(new File("cplusplus.png"));
-			imagePerspective.setImage("cplusplus.png", image);
+			BufferedImage image = ImageIO.read(new File("cplusplus.png"));
+			PerpectiveChanged listener = new PerpectiveChanged();
+			
+			imagePerspective = PerspectiveFactory.makePerspective("cplusplus.png", image);
+			imagePerspective.setZoom(PerspectiveUtil.zoomToFit(imagePerspective, 400, 400));
+			imagePerspective.imageChanged.addObserver(listener);
+			imagePerspective.imageChanged.addObserver(new Observer() {
+				@Override
+				public void update(Observable arg0, Object arg1) {
+					thumbnailPerspective.setImage(imagePerspective.getImageName(), imagePerspective.getImage());
+				}
+			});
+			imagePerspective.zoomChanged.addObserver(listener);
+			imagePerspective.positionChanged.addObserver(listener);
+			
+			thumbnailPerspective = PerspectiveFactory.makePerspective();
+			thumbnailPerspective.imageChanged.addObserver(new Observer() {
+				@Override
+				public void update(Observable arg0, Object arg1) {
+					thumbnailGraphicalView.setImage(thumbnailPerspective.getImage());	
+				}
+			});
+			thumbnailPerspective.setImage(imagePerspective.getImageName(), imagePerspective.getImage());
+			thumbnailPerspective.setZoom(PerspectiveUtil.zoomToFit(thumbnailPerspective, THUMB_WIDTH, THUMB_HEIGHT));
+			
+			graphicalView.setPerspective(imagePerspective);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
