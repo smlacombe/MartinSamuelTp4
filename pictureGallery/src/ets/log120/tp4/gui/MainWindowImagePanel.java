@@ -134,7 +134,7 @@ public class MainWindowImagePanel extends JFrame {
 			PerpectiveChanged listener = new PerpectiveChanged();
 			
 			imagePerspective = PerspectiveFactory.makePerspective("cplusplus.png", image);
-			imagePerspective.setZoom(PerspectiveUtil.zoomToFit(imagePerspective, 400, 400));
+			imagePerspective.setZoom(PerspectiveUtil.getZoomToFitDisplay(imagePerspective, 400, 400));
 			imagePerspective.imageChanged.addObserver(listener);
 			imagePerspective.imageChanged.addObserver(new Observer() {
 				@Override
@@ -153,7 +153,7 @@ public class MainWindowImagePanel extends JFrame {
 				}
 			});
 			thumbnailPerspective.setImage(imagePerspective.getImageName(), imagePerspective.getImage());
-			thumbnailPerspective.setZoom(PerspectiveUtil.zoomToFit(thumbnailPerspective, THUMB_WIDTH, THUMB_HEIGHT));
+			thumbnailPerspective.setZoom(PerspectiveUtil.getZoomToFitDisplay(thumbnailPerspective, THUMB_WIDTH, THUMB_HEIGHT));
 			
 			graphicalView.setPerspective(imagePerspective);
 			

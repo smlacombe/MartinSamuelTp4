@@ -1,9 +1,12 @@
 package ets.log120.tp4.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
@@ -21,6 +24,7 @@ import javax.swing.JToolBar;
 
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
+import ets.log120.tp4.app.PerspectiveUtil;
 import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
@@ -45,14 +49,9 @@ public class PerspectiveGraphicalView extends JPanel {
 			}
 		});
 		
-		imageComponent.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent event) {
-				//if (event.getButton() == MouseEvent.BUTTON3)
-					//System.out.println(event.getPoint());
-					//System.out.println(event.getButton());
-			}
-		});
+		DragAndDropListener listener = new DragAndDropListener();
+		imageComponent.addMouseListener(listener);
+		imageComponent.addMouseMotionListener(listener);
 	}
 
 	// --------------------------------------------------
@@ -124,4 +123,48 @@ public class PerspectiveGraphicalView extends JPanel {
 	private Controller controller;
 	private Perspective perspective;
 	private ImageComponent imageComponent;
+	
+	// --------------------------------------------------
+	// Classe(s) interne(s)
+	// --------------------------------------------------
+	
+	private class DragAndDropListener extends MouseAdapter {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				buttonPressed = true;
+				pressedPosition = e.getPoint();
+			}
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (buttonPressed && e.getButton() == MouseEvent.BUTTON1) {
+				buttonPressed = false;
+				
+				Point releasedPosition = e.getPoint();
+				
+				int horizontalTranslation = pressedPosition.x - releasedPosition.x;
+				int verticalTranslation = pressedPosition.y - releasedPosition.y;
+				
+				Point translation = PerspectiveUtil.getTranslationToFitDisplay(
+						perspective,
+						imageComponent.getSize().width, imageComponent.getSize().width,
+						new Point(horizontalTranslation, verticalTranslation));
+				
+				if (translation.x != 0 || translation.y != 0)
+					controller.performCommand(new TranslationCommand(perspective, translation.x, translation.y));
+			}
+		}
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (buttonPressed) {
+				
+			}
+		}
+		
+		private boolean buttonPressed;
+		private Point pressedPosition;
+	}
 }
