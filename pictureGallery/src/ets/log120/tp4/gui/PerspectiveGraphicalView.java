@@ -3,6 +3,8 @@ package ets.log120.tp4.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import javax.swing.JToolBar;
 
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
+import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
 public class PerspectiveGraphicalView extends JPanel {
@@ -30,6 +33,17 @@ public class PerspectiveGraphicalView extends JPanel {
 		
 		add(imageComponent = new ImageComponent(width, height), BorderLayout.CENTER);
 		add(getToolBar(), BorderLayout.PAGE_START);
+		
+		imageComponent.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent event) {
+				System.out.println(event.getPoint());
+				PerspectiveGraphicalView.this.controller.performCommand(new ZoomCommand(perspective, -1 * event.getWheelRotation() * 0.05 * perspective.getZoom()));
+				PerspectiveGraphicalView.this.controller.performCommand(new TranslationCommand(perspective,
+						event.getPoint().x - perspective.getPosition().x,
+						event.getPoint().y - perspective.getPosition().y));
+			}
+		});
 	}
 
 	// --------------------------------------------------
@@ -40,11 +54,11 @@ public class PerspectiveGraphicalView extends JPanel {
 		perspective = value;
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(new File(perspective.getImage()));
+			image = ImageIO.read(new File(perspective.getImageName()));
 		} catch (IOException e) {
 			// Nothing to do
 		} finally {
-			imageComponent.setImage(image, perspective.getZoom());
+			imageComponent.setImage(image, perspective.getZoom(), perspective.getPosition());
 		}
 	}
 
@@ -88,7 +102,7 @@ public class PerspectiveGraphicalView extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				BufferedImage image = null;
 				try {
-					image = ImageIO.read(new File(perspective.getImage()));
+					image = ImageIO.read(new File(perspective.getImageName()));
 					double bestZoom = 1.0;
 					
 					if (imageComponent.getSize().getHeight() < imageComponent.getSize().getWidth())

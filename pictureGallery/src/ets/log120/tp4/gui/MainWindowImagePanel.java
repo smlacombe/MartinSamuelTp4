@@ -99,8 +99,6 @@ public class MainWindowImagePanel extends JFrame {
 		panelMiddle.add(verticalTranslationScrollbar, BorderLayout.EAST);
 		*/
 		add(panelMiddle, BorderLayout.CENTER);
-		
-		addMenus();
 				
 		validate();
 		
@@ -115,36 +113,12 @@ public class MainWindowImagePanel extends JFrame {
 	// --------------------------------------------------
 	// Méthode(s)
 	// --------------------------------------------------
-	private void addMenus() {
-		// Ajoute un menu contextuel au bouton « Annuler »
-		undoMenu = new JPopupMenu();
-		undoMenuItems = new LinkedList<JMenuItem>();
-		
-		for (int i = 1; i <= 10; ++i) {
-			undoMenuItems.addLast(new JMenuItem("Item " + i));
-			undoMenuItems.getLast().addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					System.out.println("Item ? clicked.");
-				}
-			});
-			undoMenu.add(undoMenuItems.getLast());
-		}
-	}
 	
 	private JPanel getImagePanel() {
 		graphicalView = new PerspectiveGraphicalView(controller, 400, 400);
 		
 		graphicalView.setBackground(Color.RED);		
 		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
-		
-		graphicalView.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(imagePerspective, -1 * event.getWheelRotation() * 0.05 * imagePerspective.getZoom()));
-				//updateScrollbarsMaxValue();
-			}
-		});
 		
 		return graphicalView;
 	}
@@ -190,14 +164,7 @@ public class MainWindowImagePanel extends JFrame {
 		thumbnailPerspective.imageChanged.addObserver(new Observer() {
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				BufferedImage image = null;
-				try {
-					image = ImageIO.read(new File(thumbnailPerspective.getImage()));
-				} catch (IOException e) {
-					// Nothing to do
-				} finally {
-					thumbnailGraphicalView.setImage(image);	
-				}
+				thumbnailGraphicalView.setImage(thumbnailPerspective.getImage());	
 			}
 		});
 		
@@ -207,93 +174,25 @@ public class MainWindowImagePanel extends JFrame {
 		imagePerspective.imageChanged.addObserver(new Observer() {
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				thumbnailPerspective.setImage(imagePerspective.getImage());
+				thumbnailPerspective.setImage(imagePerspective.getImageName(), imagePerspective.getImage());
 			}
 		});
 		imagePerspective.zoomChanged.addObserver(listener);
 		imagePerspective.positionChanged.addObserver(listener);
 		
-		//imagePerspective.setImage("vincent.jpg");
-		//imagePerspective.setImage("petiteImage.png");
-		//imagePerspective.setImage("imageEnHauteur.png");
-		imagePerspective.setImage("cplusplus.png");
+		BufferedImage image = null;
+		try {
+			String str = "vincent.jpg";
+			//String str = "petiteImage.jpg";
+			//String str = "imageEnHauteur.jpg";
+			//String str = "imageEnHauteur.jpg";
+			
+			image = ImageIO.read(new File("cplusplus.png"));
+			imagePerspective.setImage("cplusplus.png", image);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
-	/*
-	private JPanel getButtonPanel() {
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.BLUE);	
-		panel.add(button1 = new JButton("Image"));
-		button1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ChangeImageCommand(imagePerspective, "image" + ++n + ".png"));
-			}
-		});
-		
-		panel.add(button2 = new JButton("Zoom"));
-		button2.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ZoomCommand(imagePerspective, 0.5));
-			}
-		});
-		
-		panel.add(buttonLeft = new JButton("←"));
-		buttonLeft.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective, -10, 0));
-			}
-		});
-		
-		panel.add(buttonRight = new JButton("→"));
-		buttonRight.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective, 10, 0));
-			}
-		});
-		
-		panel.add(buttonUp = new JButton("↑"));
-		buttonUp.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective, 0, -10));
-			}
-		});
-		
-		panel.add(buttonDown = new JButton("↓"));
-		buttonDown.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new TranslationCommand(imagePerspective, 0, 10));
-			}
-		});
-
-		panel.add(undoButton = new JButton("Annuler"));
-		undoButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.undo();
-			}
-		});
-		undoButton.addMouseListener(new PopupListener(undoMenu));
-		
-		// Bouton « Refaire »
-		panel.add(redoButton = new JButton("Refaire"));
-		redoButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.redo();
-			}
-		});
-		panel.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-	
-		panel.setMaximumSize(panel.getPreferredSize());
-		return panel;
-	}
-	*/
 	
 	/**
 	 * Initialise le fichier de propriétés contenant le texte à afficher à l'utilisateur.
@@ -317,29 +216,6 @@ public class MainWindowImagePanel extends JFrame {
 	// --------------------------------------------------
 	
 	private java.util.Properties lang;
-	
-	int n = 0;
-	private JButton button1;
-	private JButton button2;
-	private JButton buttonLeft;
-	private JButton buttonRight;
-	private JButton buttonUp;
-	private JButton buttonDown;
-	
-	private JButton undoButton;
-	private JButton redoButton;
-	private JPopupMenu undoMenu;
-	private LinkedList<JMenuItem> undoMenuItems;
-	
-	private JScrollBar verticalTranslationScrollbar;
-	private int vTranslate_max = 0;
-	private int vTranslate_min = 0;
-	private int v_oldValue = 0;
-	
-	private JScrollBar horizontalTranslationScrollbar;
-	private int hTranslate_max = 0;
-	private int hTranslate_min = 0;
-	private int h_oldValue = 0;	
 	
 	private Perspective imagePerspective;
 	private Perspective thumbnailPerspective;

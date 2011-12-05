@@ -28,7 +28,7 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 	// --------------------------------------------------
 
 	public void update(Perspective p) {
-		nameField.setText(p.getImage());
+		nameField.setText(p.getImageName());
 		zoomField.setText(Double.toString(p.getZoom()));
 		positionField.setText(p.getPosition().toString());
 	}

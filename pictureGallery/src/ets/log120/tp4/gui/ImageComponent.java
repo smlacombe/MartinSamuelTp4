@@ -3,6 +3,7 @@ package ets.log120.tp4.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
@@ -58,8 +59,17 @@ public class ImageComponent extends JComponent {
 	}
 
 	public void setImage(BufferedImage newImage, double zoom) {
+		Point center = new Point();
+		center.x = newImage.getWidth() / 2;
+		center.y = newImage.getHeight() / 2;
+		
+		setImage(newImage, zoom, center);
+	}
+	
+	public void setImage(BufferedImage newImage, double zoom, Point displayCenter) {
 		this.image = newImage;
 		this.zoom = zoom;
+		this.displayCenter = displayCenter;
 		repaint();
 	}
 
@@ -77,11 +87,9 @@ public class ImageComponent extends JComponent {
 
 				int displayImageWidth = (int) (displaySize.width / zoom);
 				int displayImageHeight = (int) (displaySize.height / zoom);
-				int imageCenterX = image.getWidth() / 2;
-				int imageCenterY = image.getHeight() / 2;
 
-				int x = imageCenterX - (displayImageWidth / 2);
-				int y = imageCenterY - (displayImageHeight / 2);
+				int x = displayCenter.x - (displayImageWidth / 2);
+				int y = displayCenter.y - (displayImageHeight / 2);
 
 				g.drawImage(image,
 						0, 0, displaySize.width, displaySize.height,
@@ -115,5 +123,6 @@ public class ImageComponent extends JComponent {
 
 	private BufferedImage image;
 	private Dimension displaySize;
+	private Point displayCenter;
 	private double zoom;
 }
