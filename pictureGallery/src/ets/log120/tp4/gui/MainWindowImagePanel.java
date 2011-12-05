@@ -118,46 +118,9 @@ public class MainWindowImagePanel extends JFrame {
 		graphicalView = new PerspectiveGraphicalView(controller, 400, 400);
 		
 		graphicalView.setBackground(Color.RED);		
-		// Permet d'utiliser la molette de la sourie pour agrandir ou réduire la taille de l'image
 		
 		return graphicalView;
 	}
-	/*
-	private void updateScrollbarsMaxValue() {
-		double zoom;
-		zoom = imagePerspective.getZoom();
-		int maxH;
-		int maxV;
-		int panelImageHeightDiff = graphicalView.getHeight() - graphicalView.getCurrentImageHeight();
-		int panelImageWidthDiff = graphicalView.getWidth() - graphicalView.getCurrentImageWidth();
-		
-		if (panelImageWidthDiff >= 0)
-			maxH = 0;
-		else
-			maxH = Math.abs(panelImageWidthDiff);
-
-		if (panelImageHeightDiff >= 0)
-			maxV = 0;
-		else
-			maxV = Math.abs(panelImageHeightDiff);
-		
-		horizontalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxH);
-		verticalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxV);
-		//System.out.println("maxh: " + maxH + " " + "maxv: " + maxV + " " + "valv: " + verticalTranslationSlider.getValue() + " " + "valh: " + horizontalTranslationSlider.getValue() + " ");
-
-	}
-	*/
-	/*
-	public String loadFile (Frame f, String title, String defDir, String fileType) {
-	    FileDialog fd = new FileDialog(f, title, FileDialog.LOAD);
-	    fd.setFile(fileType);
-	    fd.setDirectory(defDir);
-	    fd.setLocation(50, 50);
-	    fd.show();
-	    
-	    return fd.getFile();
-    }
-    */
 	
 	private void initImagePerspective() {
 		thumbnailPerspective = PerspectiveFactory.makePerspective();

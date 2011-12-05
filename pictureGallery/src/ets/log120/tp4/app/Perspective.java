@@ -15,6 +15,7 @@ public class Perspective {
 	
 	public Perspective() {
 		this.imageName = "";
+		this.image = null;
 		this.zoom = 1.0;
 		this.position = new Point(0, 0);
 	}
@@ -49,6 +50,9 @@ public class Perspective {
 		
 		imageChanged.setChanged();
 		imageChanged.notifyObservers();
+		
+		if (image != null)
+			setPosition(new Point(image.getWidth() / 2, image.getHeight() / 2));
 	}
 	
 	public void setZoom(double value) {

@@ -3,6 +3,9 @@ package ets.log120.tp4.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
@@ -37,11 +40,17 @@ public class PerspectiveGraphicalView extends JPanel {
 		imageComponent.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				System.out.println(event.getPoint());
-				PerspectiveGraphicalView.this.controller.performCommand(new ZoomCommand(perspective, -1 * event.getWheelRotation() * 0.05 * perspective.getZoom()));
-				PerspectiveGraphicalView.this.controller.performCommand(new TranslationCommand(perspective,
-						event.getPoint().x - perspective.getPosition().x,
-						event.getPoint().y - perspective.getPosition().y));
+				PerspectiveGraphicalView.this.controller.performCommand(new ZoomCommand(perspective,
+						-1 * event.getWheelRotation() * 0.05 * perspective.getZoom()));
+			}
+		});
+		
+		imageComponent.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent event) {
+				//if (event.getButton() == MouseEvent.BUTTON3)
+					//System.out.println(event.getPoint());
+					//System.out.println(event.getButton());
 			}
 		});
 	}
@@ -52,14 +61,7 @@ public class PerspectiveGraphicalView extends JPanel {
 
 	public void setPerspective(Perspective value) {
 		perspective = value;
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File(perspective.getImageName()));
-		} catch (IOException e) {
-			// Nothing to do
-		} finally {
-			imageComponent.setImage(image, perspective.getZoom(), perspective.getPosition());
-		}
+		imageComponent.setImage(perspective.getImage(), perspective.getZoom(), perspective.getPosition());
 	}
 
 	// --------------------------------------------------
@@ -100,20 +102,14 @@ public class PerspectiveGraphicalView extends JPanel {
 		zoomFitBestButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				BufferedImage image = null;
-				try {
-					image = ImageIO.read(new File(perspective.getImageName()));
-					double bestZoom = 1.0;
+				double bestZoom = 1.0;
 					
-					if (imageComponent.getSize().getHeight() < imageComponent.getSize().getWidth())
-						bestZoom = imageComponent.getSize().getHeight() / image.getHeight();
-					else
-						bestZoom = imageComponent.getSize().getWidth() / image.getWidth();
+				if (imageComponent.getSize().getHeight() < imageComponent.getSize().getWidth())
+					bestZoom = imageComponent.getSize().getHeight() / perspective.getImage().getHeight();
+				else
+					bestZoom = imageComponent.getSize().getWidth() / perspective.getImage().getWidth();
 					
-					controller.performCommand(new ZoomCommand(perspective, bestZoom - perspective.getZoom()));
-				} catch (IOException e) {
-					// Nothing to do
-				}
+				controller.performCommand(new ZoomCommand(perspective, bestZoom - perspective.getZoom()));
 			}
 		});
 		toolBar.add(zoomFitBestButton);
