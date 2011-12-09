@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Main {
 	public static void main(String[] args) {
-		MainWindowImagePanel app = new MainWindowImagePanel();
+		MainWindow app = new MainWindow();
 		/* java.awt.image.BufferedImage image = null;
 		
 		try {
