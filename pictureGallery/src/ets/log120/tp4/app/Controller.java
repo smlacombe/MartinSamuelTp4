@@ -49,6 +49,6 @@ public class Controller {
 	// Attribut(s)
 	// --------------------------------------------------
 	
-	private java.util.LinkedList<Command> pastCommands;
-	private java.util.LinkedList<Command> futurCommands;
+	java.util.LinkedList<Command> pastCommands;
+	java.util.LinkedList<Command> futurCommands;
 }

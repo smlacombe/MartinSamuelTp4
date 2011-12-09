@@ -1,5 +1,8 @@
 package ets.log120.tp4.app;
 
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+
 public class Perspective {
 	
 	public ImageChangedEvent    imageChanged    = new ImageChangedEvent();
@@ -11,24 +14,29 @@ public class Perspective {
 	// --------------------------------------------------
 	
 	public Perspective() {
-		this.image = "";
+		this.imageName = "";
+		this.image = null;
 		this.zoom = 1.0;
-		this.position = new java.awt.Point(0, 0);
+		this.position = new Point(0, 0);
 	}
 	
 	// --------------------------------------------------
 	// Accesseur(s)
 	// --------------------------------------------------
 	
-	public String getImage() {
+	public BufferedImage getImage() {
 		return image;
+	}
+	
+	public String getImageName() {
+		return imageName;
 	}
 	
 	public double getZoom() {
 		return zoom;
 	}
 	
-	public java.awt.Point getPosition() {
+	public Point getPosition() {
 		return position;
 	}
 	
@@ -36,11 +44,15 @@ public class Perspective {
 	// Mutateur(s)
 	// --------------------------------------------------
 	
-	public void setImage(String value) {
-		image = value;
+	public void setImage(String imageName, BufferedImage image) {
+		this.imageName = imageName;
+		this.image = image;
 		
 		imageChanged.setChanged();
 		imageChanged.notifyObservers();
+		
+		if (image != null)
+			setPosition(new Point(image.getWidth() / 2, image.getHeight() / 2));
 	}
 	
 	public void setZoom(double value) {
@@ -50,7 +62,7 @@ public class Perspective {
 		zoomChanged.notifyObservers();
 	}
 	
-	public void setPosition(java.awt.Point value) {
+	public void setPosition(Point value) {
 		position = value;
 		
 		positionChanged.setChanged();
@@ -65,7 +77,8 @@ public class Perspective {
 	// Attribut(s)
 	// --------------------------------------------------
 	
-	private String image;
+	private BufferedImage image;
+	private String imageName;
 	private double zoom;
-	private java.awt.Point position;
+	private Point position;
 }

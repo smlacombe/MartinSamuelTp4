@@ -3,6 +3,7 @@ package ets.log120.tp4.app.test;
 
 import static org.junit.Assert.*;
 
+import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -38,7 +39,7 @@ public class PerspectiveTest {
 		perspective.imageChanged.addObserver(functor);
 		
 		assertFalse(functor.methodExecuted);
-		perspective.setImage("newImage.png");
+		perspective.setImage("newImage.png", new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB ));
 		assertTrue(functor.methodExecuted);
 	}
 	

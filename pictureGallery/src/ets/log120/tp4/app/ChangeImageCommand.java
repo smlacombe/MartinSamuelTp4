@@ -1,5 +1,7 @@
 package ets.log120.tp4.app;
 
+import java.awt.image.BufferedImage;
+
 public class ChangeImageCommand
 		implements Command {
 
@@ -7,8 +9,9 @@ public class ChangeImageCommand
 	// Constructeur(s)
 	// --------------------------------------------------
 	
-	public ChangeImageCommand(Perspective subject, String newImage) {
+	public ChangeImageCommand(Perspective subject, String newImageName, BufferedImage newImage) {
 		this.subject = subject;
+		this.newImageName = newImageName;
 		this.newImage = newImage;
 	}
 	
@@ -27,13 +30,14 @@ public class ChangeImageCommand
 	@Override
 	public void doCommand() {
 		oldImage = subject.getImage();
-		subject.setImage(newImage);
+		oldImageName = subject.getImageName();
+		subject.setImage(newImageName, newImage);
 	}
 
 	@Override
 	public void undoCommand() {
-		if (oldImage != null)
-			subject.setImage(oldImage);
+		if (oldImageName != null && oldImage != null)
+			subject.setImage(oldImageName, oldImage);
 	}
 	
 	// --------------------------------------------------
@@ -41,6 +45,8 @@ public class ChangeImageCommand
 	// --------------------------------------------------
 
 	private Perspective subject;
-	private String newImage;
-	private String oldImage;
+	private String newImageName;
+	private String oldImageName;
+	private BufferedImage newImage;
+	private BufferedImage oldImage;
 }
