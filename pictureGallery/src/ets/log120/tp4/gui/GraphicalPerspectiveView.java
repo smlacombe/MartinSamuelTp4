@@ -51,7 +51,9 @@ public class GraphicalPerspectiveView extends JPanel {
 	}
 	
 	private void initImage() {
+		//System.out.println(perspective.getImage().getWidth() + " " + perspective.getImage().getHeight());
 		image = new ImageComponent(perspective.getImage().getWidth(),perspective.getImage().getHeight());
+		updateImage();
 		image.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
@@ -131,6 +133,10 @@ public class GraphicalPerspectiveView extends JPanel {
 		});
 	}
 	
+	private void updateImage() {
+		image.setImage(perspective.getImage(), perspective.getZoom(), perspective.getPosition());
+	}
+	
 	private void updateScrollbarsMaxValue() {
 		double zoom;
 		zoom = perspective.getZoom();
@@ -178,6 +184,7 @@ public class GraphicalPerspectiveView extends JPanel {
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
+			updateImage();
 			image.repaint();
 		}
 	}

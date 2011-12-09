@@ -24,6 +24,8 @@ public class TextualPerspectiveView extends JPanel {
 		perspective.imageChanged.addObserver(listener);
 		perspective.zoomChanged.addObserver(listener);
 		perspective.positionChanged.addObserver(listener);
+		
+		updateText();
 	}
 	
 	private void initJTextArea() {

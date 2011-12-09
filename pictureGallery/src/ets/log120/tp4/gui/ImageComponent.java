@@ -7,7 +7,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-public class ImageComponent extends Component {
+import javax.swing.JComponent;
+
+public class ImageComponent extends JComponent {
 	public ImageComponent(int width, int height) {
 		this.width  = width;
 		this.height = height;
@@ -27,10 +29,11 @@ public class ImageComponent extends Component {
 		return (int) (height*zoom);
 	}
 	
+	@Override
 	public void paintComponent(Graphics g) {
     	Graphics2D g2 = (Graphics2D) g;
-    	g2.translate(position.x, position.y);
-    	g2.drawImage(image.getScaledInstance((int) (width*zoom), (int) (height*zoom), Image.SCALE_FAST), 0, 0, null);
+    	//g2.translate(position.x, position.y);
+    	g2.drawImage(image.getScaledInstance((int) (width*zoom), (int) (height*zoom), Image.SCALE_FAST), position.x, position.y, null);
     }
 	
 	private int height;
