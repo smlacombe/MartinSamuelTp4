@@ -2,9 +2,10 @@ package ets.log120.tp4.app;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Perspective {
-	
+public class Perspective implements Serializable {
+
 	public ImageChangedEvent    imageChanged    = new ImageChangedEvent();
 	public ZoomChangedEvent     zoomChanged     = new ZoomChangedEvent();
 	public PositionChangedEvent positionChanged = new PositionChangedEvent();
@@ -77,8 +78,9 @@ public class Perspective {
 	// Attribut(s)
 	// --------------------------------------------------
 	
-	private BufferedImage image;
+	private transient BufferedImage image;
 	private String imageName;
 	private double zoom;
 	private Point position;
+	private static final long serialVersionUID = 1L;
 }

@@ -1,5 +1,7 @@
 app.title=Visualisateur de photos
 app.menu.file=Fichier
 app.menu.file.exit=Quitter
+app.menu.file.save=Sauvegarder
+app.menu.file.openPerspective=Ouvrir perspective
 app.menu.image=Image
-app.menu.image.open=Ouvrir
+app.menu.image.change=Changer l'image
