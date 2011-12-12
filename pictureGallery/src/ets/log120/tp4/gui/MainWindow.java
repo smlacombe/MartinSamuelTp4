@@ -1,14 +1,9 @@
 package ets.log120.tp4.gui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,29 +12,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Observable;
-
 import javax.imageio.ImageIO;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
-
 import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.PerspectiveFactory;
-import ets.log120.tp4.app.ZoomCommand;
-import ets.log120.tp4.app.TranslationCommand;
 
 public class MainWindow extends JFrame {
 
@@ -67,7 +52,7 @@ public class MainWindow extends JFrame {
 
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 600);
+		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -132,7 +117,6 @@ public class MainWindow extends JFrame {
 		textViewThumbnailBox.add(Box.createVerticalGlue());
 		textViewThumbnailBox.add(thumbnail);
 		add(textViewThumbnailBox, BorderLayout.WEST);
-
 	}
 
 	/**
@@ -206,8 +190,6 @@ public class MainWindow extends JFrame {
 				System.out.println("fail");
 			}
 
-		//	initGraphicalView();
-			//updateThumbnail();
 		} catch (java.io.IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -263,7 +245,8 @@ public class MainWindow extends JFrame {
 	private Controller controller;
 	private ImageComponent thumbnail;
 	private Box textViewThumbnailBox;
-	private JMenu fileMenu;
+	static private final int WINDOW_WIDTH = 800;
+	static private final int WINDOW_HEIGHT = 600;
 
 	// --------------------------------------------------
 	// Classe(s) interne(s)
