@@ -1,6 +1,7 @@
 package ets.log120.tp4.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,20 +22,19 @@ public class ImageComponent extends JComponent {
 		this.position = position;
 	}
 	
-	public int getDrawedWidth() {
+	public int getScaledWidth() {
 		return (int) (width*zoom);
 	}
 	
-	public int getDrawedHeight() {
+	public int getScaledHeight() {
 		return (int) (height*zoom);
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
     	Graphics2D g2 = (Graphics2D) g;
-    	//g2.translate(position.x, position.y);
-    	g2.drawImage(image.getScaledInstance((int) (width*zoom), (int) (height*zoom), Image.SCALE_FAST), position.x, position.y, null);
-    }
+    	g2.drawImage(image.getScaledInstance((int) getScaledWidth(), (int) getScaledHeight(), Image.SCALE_FAST), position.x, position.y, null);
+	}
 	
 	private int height;
 	private int width;

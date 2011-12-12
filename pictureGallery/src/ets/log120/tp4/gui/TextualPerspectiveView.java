@@ -31,11 +31,12 @@ public class TextualPerspectiveView extends JPanel {
 	private void initJTextArea() {
 		textView = new JTextArea(5, 20);
 		textView.setEditable(false);
+		textView.setLineWrap(true);
 	}
 	
 	private void updateText() {
 		textView.setText("Image: " + perspective.getImageName()
-				+ "\nZoom: " + perspective.getZoom()
+				+ "\nZoom: " + Math.round(perspective.getZoom()*100) + "%"
 				+ "\nPosition: (" + perspective.getPosition().getX() + ", " + perspective.getPosition().getY() + ")");
 	}
 		

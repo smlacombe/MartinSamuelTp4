@@ -3,6 +3,8 @@ package ets.log120.tp4.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -48,10 +50,11 @@ public class GraphicalPerspectiveView extends JPanel {
 		perspective.imageChanged.addObserver(listener);
 		perspective.zoomChanged.addObserver(listener);
 		perspective.positionChanged.addObserver(listener);
+		
+		updateScrollbarsMaxValue();
 	}
 	
 	private void initImage() {
-		//System.out.println(perspective.getImage().getWidth() + " " + perspective.getImage().getHeight());
 		image = new ImageComponent(perspective.getImage().getWidth(),perspective.getImage().getHeight());
 		updateImage();
 		image.addMouseWheelListener(new MouseWheelListener() {
@@ -104,6 +107,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, 0.1));
+				updateScrollbarsMaxValue();
 			}
 		});
 		
@@ -113,6 +117,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, -0.1));
+				updateScrollbarsMaxValue();
 			}
 		});
 		
@@ -121,6 +126,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.undo();
+				updateScrollbarsMaxValue();
 			}
 		});
 		
@@ -129,6 +135,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.redo();
+				updateScrollbarsMaxValue();
 			}
 		});
 	}
@@ -137,14 +144,26 @@ public class GraphicalPerspectiveView extends JPanel {
 		image.setImage(perspective.getImage(), perspective.getZoom(), perspective.getPosition());
 	}
 	
+	
+	
+	private int getImagePanelWidthDiff() {
+		return getWidth() - image.getScaledWidth();
+	}
+	
+	private int getImagePanelHeightDiff() {
+		return getHeight() -  image.getScaledHeight() - toolBar.getHeight();
+	}
+	
 	private void updateScrollbarsMaxValue() {
 		double zoom;
 		zoom = perspective.getZoom();
 		int maxH;
 		int maxV;
-		int panelImageHeightDiff = image.getDrawedHeight() - image.getHeight();
-		int panelImageWidthDiff = image.getDrawedWidth() - image.getWidth();
-		//System.out.println(image.getDrawedWidth() - image.getWidth());
+		int panelImageWidthDiff = getImagePanelWidthDiff();
+		int panelImageHeightDiff = getImagePanelHeightDiff();
+		
+		System.out.println((image.getScaledHeight()) + " " + getHeight());
+		horizontalTranslationScrollbar.setAutoscrolls(true);
 		if (panelImageWidthDiff >= 0) {
 			maxH = 0;
 			horizontalTranslationScrollbar.setVisible(false);

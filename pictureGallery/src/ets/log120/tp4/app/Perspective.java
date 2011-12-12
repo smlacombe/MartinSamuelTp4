@@ -52,7 +52,7 @@ public class Perspective {
 		imageChanged.notifyObservers();
 		
 		if (image != null)
-			setPosition(new Point(image.getWidth() / 2, image.getHeight() / 2));
+			setPosition(new Point(0, 0));
 	}
 	
 	public void setZoom(double value) {

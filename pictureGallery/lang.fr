@@ -1,1 +1,5 @@
 app.title=Visualisateur de photos
+app.menu.file=Fichier
+app.menu.file.exit=Quitter
+app.menu.image=Image
+app.menu.image.open=Ouvrir
