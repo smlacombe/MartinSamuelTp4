@@ -29,7 +29,7 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 
 	public void update(Perspective p) {
 		nameField.setText(p.getImageName());
-		zoomField.setText(Double.toString(p.getZoom()));
+		zoomField.setText(percentage.format(p.getZoom()));
 		positionField.setText(p.getPosition().toString());
 	}
 	
@@ -71,4 +71,6 @@ public class PerspectiveTextualView extends javax.swing.JPanel {
 	private javax.swing.JTextField nameField;
 	private javax.swing.JTextField zoomField;
 	private javax.swing.JTextField positionField;
+	
+	private java.text.DecimalFormat percentage =  new java.text.DecimalFormat("0.0#%");
 }
