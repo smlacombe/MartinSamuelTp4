@@ -50,7 +50,7 @@ public class Perspective implements Serializable {
 		this.image = image;
 		
 		imageChanged.setChanged();
-		imageChanged.notifyObservers();
+		imageChanged.notifyObservers(this);
 		
 		if (image != null)
 			setPosition(new Point(0, 0));
@@ -60,14 +60,14 @@ public class Perspective implements Serializable {
 		zoom = value;
 		
 		zoomChanged.setChanged();
-		zoomChanged.notifyObservers();
+		zoomChanged.notifyObservers(this);
 	}
 	
 	public void setPosition(Point value) {
 		position = value;
 		
 		positionChanged.setChanged();
-		positionChanged.notifyObservers();
+		positionChanged.notifyObservers(this);
 	}
 	
 	// --------------------------------------------------
