@@ -62,7 +62,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				controller.performCommand(new ZoomCommand(perspective, -1
-						* event.getWheelRotation() * 0.01));
+						* event.getWheelRotation() * 0.05));
 				updateScrollbarsMaxValue();
 			}
 		});

@@ -82,9 +82,11 @@ public class Perspective implements Serializable {
 	 * Définit le zoom de l'image (perspective).
 	 */
 	public void setZoom(double value) {
-		zoom = value;
-		zoomChanged.setChanged();
-		zoomChanged.notifyObservers(this);
+		if (value > 0) {
+			zoom = value;
+			zoomChanged.setChanged();
+			zoomChanged.notifyObservers(this);
+		}
 	}
 
 	/**
