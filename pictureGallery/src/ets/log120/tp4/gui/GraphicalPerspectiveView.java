@@ -27,45 +27,40 @@ import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
 public class GraphicalPerspectiveView extends JPanel {
-	public GraphicalPerspectiveView(Controller controller,
-			Perspective perspective) {
+	public GraphicalPerspectiveView(Controller controller, Perspective perspective) {
 		this.controller = controller;
 		this.perspective = perspective;
-		initView();
-	}
-
-	private void initView() {
+		
 		initPanelAspect();
-		initButton();
-		initToolBar();
-		initScrollbars();
-		initImage();
 
-		add(toolBar, BorderLayout.NORTH);
-		add(image, BorderLayout.CENTER);
-		add(horizontalTranslationScrollbar, BorderLayout.SOUTH);
-		add(verticalTranslationScrollbar, BorderLayout.EAST);
+		add(toolBar = getToolBar(), BorderLayout.NORTH);
+		add(image = getImageComponent(perspective), BorderLayout.CENTER);
+		add(horizontalScrollBar = getHorizontalScrollBar(), BorderLayout.SOUTH);
+		add(verticalScrollBar = getVerticalScrollBar(), BorderLayout.EAST);
 
+		// Maintenant, la mise à jour des scrollBar sont gérées par la modification de la perspective
 		PerpectiveChanged listener = new PerpectiveChanged();
+		UpdateScrollBar scrollBarListener = new UpdateScrollBar();
 		perspective.imageChanged.addObserver(listener);
+		perspective.imageChanged.addObserver(scrollBarListener);
 		perspective.zoomChanged.addObserver(listener);
+		perspective.zoomChanged.addObserver(scrollBarListener);
 		perspective.positionChanged.addObserver(listener);
-
-		updateScrollbarsMaxValue();
+		perspective.positionChanged.addObserver(scrollBarListener);
+		
+		updateImage(perspective);
 	}
 
-	private void initImage() {
-		image = new ImageComponent(perspective.getImage().getWidth(),
-				perspective.getImage().getHeight());
-		updateImage();
-		image.addMouseWheelListener(new MouseWheelListener() {
+	private ImageComponent getImageComponent(Perspective p) {
+		ImageComponent component = new ImageComponent(perspective.getImage().getWidth(), perspective.getImage().getHeight());
+		component.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				controller.performCommand(new ZoomCommand(perspective, -1
-						* event.getWheelRotation() * 0.05));
+				controller.performCommand(new ZoomCommand(perspective, -1 * event.getWheelRotation() * 0.05));
 				updateScrollbarsMaxValue();
 			}
 		});
+		return component;
 	}
 
 	private void initPanelAspect() {
@@ -73,69 +68,63 @@ public class GraphicalPerspectiveView extends JPanel {
 		setLayout(new BorderLayout());
 	}
 
-	private void initToolBar() {
-		toolBar = new JToolBar();
-		toolBar.add(buttonZoomIn);
-		toolBar.add(buttonZoomOut);
-		toolBar.add(buttonOriginalZoom);
-		toolBar.add(buttonUndo);
-		toolBar.add(buttonRedo);
+	private JToolBar getToolBar() {
+		// Retourne un JToolBar plutôt que d'en modifier un directement
+		initButton();
+		
+		JToolBar toolBar = new JToolBar();
+		toolBar.add(zoomInButton);
+		toolBar.add(zoomOutButton);
+		toolBar.add(zoomOriginalButton);
+		toolBar.add(undoButton);
+		toolBar.add(redoButton);
+		
+		return toolBar;
 	}
-
-	private void initScrollbars() {
-		horizontalTranslationScrollbar = new JScrollBar(JScrollBar.HORIZONTAL,
-				0, 0, 0, 0);
-		horizontalTranslationScrollbar
-				.addAdjustmentListener((new AdjustmentListener() {
-					public void adjustmentValueChanged(AdjustmentEvent ce) {
-						int currentValue = horizontalTranslationScrollbar
-								.getValue();
-						controller.performCommand(new TranslationCommand(
-								perspective,
-								-(currentValue - hScrollbarOldValue), 0));
-						hScrollbarOldValue = currentValue;
-					}
-				}));
-
-		verticalTranslationScrollbar = new JScrollBar(JScrollBar.VERTICAL, 0,
-				0, 0, 0);
-		verticalTranslationScrollbar
-				.addAdjustmentListener(new AdjustmentListener() {
-					public void adjustmentValueChanged(AdjustmentEvent ce) {
-						int currentValue = verticalTranslationScrollbar
-								.getValue();
-						controller.performCommand(new TranslationCommand(
-								perspective, 0,
-								-(currentValue - vScrollbarOldValue)));
-						vScrollbarOldValue = currentValue;
-					}
-				});
+	
+	private JScrollBar getHorizontalScrollBar() {
+		JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL);
+		scrollBar.addAdjustmentListener(new ScrollBarHandler(new Functor() {
+			@Override
+			public void exec(int oldValue, int newValue) {
+				controller.performCommand(new TranslationCommand(perspective, -(newValue - oldValue), 0));
+			}
+		}));
+		return scrollBar;
+	}
+	
+	private JScrollBar getVerticalScrollBar() {
+		JScrollBar scrollBar = new JScrollBar(JScrollBar.VERTICAL);
+		scrollBar.addAdjustmentListener(new ScrollBarHandler(new Functor() {
+			@Override
+			public void exec(int oldValue, int newValue) {
+				controller.performCommand(new TranslationCommand(perspective, 0, -(newValue - oldValue)));
+			}
+		}));
+		return scrollBar;
 	}
 
 	private void initButton() {
-		Icon iconeZoomIn = new ImageIcon("icon/zoom-in.png");
-		buttonZoomIn = new JButton("", iconeZoomIn);
-		buttonZoomIn.addActionListener(new ActionListener() {
+		// Les constructeurs des JButton reçoivent directement les ImageIcon
+		
+		zoomInButton = new JButton(new ImageIcon("icon/zoom-in.png"));
+		zoomInButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, 0.1));
-				updateScrollbarsMaxValue();
 			}
 		});
 
-		Icon iconeZoomOut = new ImageIcon("icon/zoom-out.png");
-		buttonZoomOut = new JButton("", iconeZoomOut);
-		buttonZoomOut.addActionListener(new ActionListener() {
+		zoomOutButton = new JButton(new ImageIcon("icon/zoom-out.png"));
+		zoomOutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective, -0.1));
-				updateScrollbarsMaxValue();
 			}
 		});
 
-		Icon iconeOriginal = new ImageIcon("icon/zoom-original.png");
-		buttonOriginalZoom = new JButton("", iconeOriginal);
-		buttonOriginalZoom.addActionListener(new ActionListener() {
+		zoomOriginalButton = new JButton(new ImageIcon("icon/zoom-original.png"));
+		zoomOriginalButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.performCommand(new ZoomCommand(perspective,
@@ -143,88 +132,94 @@ public class GraphicalPerspectiveView extends JPanel {
 			}
 		});
 
-		Icon iconeUndo = new ImageIcon("icon/undo.png");
-		buttonUndo = new JButton("", iconeUndo);
-		buttonUndo.addActionListener(new ActionListener() {
+		undoButton = new JButton(new ImageIcon("icon/undo.png"));
+		undoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.undo();
-				updateScrollbarsMaxValue();
 			}
 		});
 
-		Icon iconeRedo = new ImageIcon("icon/redo.png");
-		buttonRedo = new JButton("", iconeRedo);
-		buttonRedo.addActionListener(new ActionListener() {
+		redoButton = new JButton(new ImageIcon("icon/redo.png"));
+		redoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.redo();
-				updateScrollbarsMaxValue();
 			}
 		});
 	}
 
-	private void updateImage() {
-		image.setImage(perspective.getImage(), perspective.getZoom(),
-				perspective.getPosition());
-	}
-
-	private int getImagePanelWidthDiff() {
-		return getWidth() - image.getScaledWidth();
-	}
-
-	private int getImagePanelHeightDiff() {
-		return getHeight() - image.getScaledHeight() - toolBar.getHeight();
-	}
-
-	private void updateScrollbarsMaxValue() {
-		double zoom;
-		zoom = perspective.getZoom();
-		int maxH;
-		int maxV;
-		int panelImageWidthDiff = getImagePanelWidthDiff();
-		int panelImageHeightDiff = getImagePanelHeightDiff();
-
-		horizontalTranslationScrollbar.setAutoscrolls(true);
-		if (panelImageWidthDiff >= 0) {
-			maxH = 0;
-			horizontalTranslationScrollbar.setVisible(false);
-		} else {
-			maxH = Math.abs(panelImageWidthDiff);
-			horizontalTranslationScrollbar.setVisible(true);
-		}
-
-		if (panelImageHeightDiff >= 0) {
-			maxV = 0;
-			verticalTranslationScrollbar.setVisible(false);
-		} else {
-			maxV = Math.abs(panelImageHeightDiff);
-			verticalTranslationScrollbar.setVisible(true);
-		}
-
-		horizontalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxH);
-		verticalTranslationScrollbar.setMaximum(zoom < 0 ? 0 : maxV);
+	private void updateImage(Perspective p) {
+		// ce n'est pas à la perspective graphique de décider quand il faut rafraichir l'affichage
+		image.setImage(p.getImage(), p.getZoom(), p.getPosition());
 	}
 
 	private Perspective perspective;
 	private Controller controller;
 	private ImageComponent image;
-	private JButton buttonZoomIn;
-	private JButton buttonZoomOut;
-	private JButton buttonUndo;
-	private JButton buttonRedo;
-	private JButton buttonOriginalZoom;
-	private JScrollBar horizontalTranslationScrollbar;
-	private JScrollBar verticalTranslationScrollbar;
-	private int vScrollbarOldValue = 0;
-	private int hScrollbarOldValue = 0;
+	private JButton zoomInButton;
+	private JButton zoomOutButton;
+	private JButton undoButton;
+	private JButton redoButton;
+	private JButton zoomOriginalButton;
+	private JScrollBar horizontalScrollBar;
+	private JScrollBar verticalScrollBar;
 	private JToolBar toolBar;
 
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
-			updateImage();
-			image.repaint();
+			updateImage((Perspective) arg1);
+		}
+	}
+	
+	private class ScrollBarHandler implements AdjustmentListener {
+		public ScrollBarHandler(Functor f) {
+			functor = f;
+		}
+		
+		@Override
+		public void adjustmentValueChanged(AdjustmentEvent e) {
+			int currentValue = e.getValue();
+			functor.exec(oldValue, currentValue);
+			oldValue = currentValue;
+		}
+		
+		Functor functor;
+		int oldValue;
+	}
+	
+	private interface Functor {
+		void exec(int oldValue, int newValue);
+	}
+	
+	private class UpdateScrollBar implements java.util.Observer {
+		@Override
+		public void update(Observable arg0, Object arg1) {
+			int maxH;
+			int maxV;
+			int panelImageWidthDiff = getWidth() - image.getScaledWidth();
+			int panelImageHeightDiff = getHeight() - image.getScaledHeight() - toolBar.getHeight();
+
+			horizontalScrollBar.setAutoscrolls(true);
+			if (panelImageWidthDiff >= 0) {
+				maxH = 0;
+				horizontalScrollBar.setVisible(false);
+			} else {
+				maxH = Math.abs(panelImageWidthDiff);
+				horizontalScrollBar.setVisible(true);
+			}
+
+			if (panelImageHeightDiff >= 0) {
+				maxV = 0;
+				verticalScrollBar.setVisible(false);
+			} else {
+				maxV = Math.abs(panelImageHeightDiff);
+				verticalScrollBar.setVisible(true);
+			}
+
+			horizontalScrollBar.setMaximum(Math.max(0, maxH)); // Math.max() remplace un opérateur ternaire
+			verticalScrollBar.setMaximum(Math.max(0, maxV));
 		}
 	}
 }

@@ -18,6 +18,7 @@ public class ImageComponent extends JComponent {
 		this.image = image;
 		this.zoom = zoom;
 		this.position = position;
+		repaint();
 	}
 	
 	public int getScaledWidth() {
@@ -31,7 +32,7 @@ public class ImageComponent extends JComponent {
 	@Override
 	public void paintComponent(Graphics g) {
     	Graphics2D g2 = (Graphics2D) g;
-    	g2.drawImage(image.getScaledInstance((int) getScaledWidth(), (int) getScaledHeight(), Image.SCALE_FAST), position.x, position.y, null);
+    	g2.drawImage(image.getScaledInstance(getScaledWidth(), getScaledHeight(), Image.SCALE_FAST), position.x, position.y, null);
 	}
 	
 	private int height;
