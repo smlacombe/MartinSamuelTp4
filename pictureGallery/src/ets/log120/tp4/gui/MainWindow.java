@@ -215,7 +215,6 @@ public class MainWindow extends JFrame {
 					String fileName = fc.getSelectedFile().getAbsolutePath();
 					BufferedImage newImage = null;
 					try {
-						System.out.println(fileName);
 						newImage = ImageIO.read(new File(fileName));
 					} catch (IOException ex) {
 						System.out.println("fail");

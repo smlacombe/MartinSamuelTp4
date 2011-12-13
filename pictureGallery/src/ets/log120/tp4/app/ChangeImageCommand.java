@@ -2,31 +2,31 @@ package ets.log120.tp4.app;
 
 import java.awt.image.BufferedImage;
 
-public class ChangeImageCommand
-		implements Command {
+/**
+ * Commande permettant de changer l'image de la perspective.
+ * @author Martin Desharnais
+ *
+ */
+public class ChangeImageCommand implements Command {
 
 	// --------------------------------------------------
 	// Constructeur(s)
 	// --------------------------------------------------
-	
-	public ChangeImageCommand(Perspective subject, String newImageName, BufferedImage newImage) {
+
+	public ChangeImageCommand(Perspective subject, String newImageName,
+			BufferedImage newImage) {
 		this.subject = subject;
 		this.newImageName = newImageName;
 		this.newImage = newImage;
 	}
-	
-	// --------------------------------------------------
-	// Accesseur(s)
-	// --------------------------------------------------
-	
-	// --------------------------------------------------
-	// Mutateur(s)
-	// --------------------------------------------------
-	
+
 	// --------------------------------------------------
 	// Méthode(s)
 	// --------------------------------------------------
-	
+
+	/**
+	 * Exécute la commande
+	 */
 	@Override
 	public void doCommand() {
 		oldImage = subject.getImage();
@@ -34,12 +34,15 @@ public class ChangeImageCommand
 		subject.setImage(newImageName, newImage);
 	}
 
+	/**
+	 * Défait la commande
+	 */
 	@Override
 	public void undoCommand() {
 		if (oldImageName != null && oldImage != null)
 			subject.setImage(oldImageName, oldImage);
 	}
-	
+
 	// --------------------------------------------------
 	// Attribut(s)
 	// --------------------------------------------------
