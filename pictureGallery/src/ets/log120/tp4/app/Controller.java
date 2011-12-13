@@ -7,8 +7,8 @@ public class Controller {
 	// --------------------------------------------------
 	
 	public Controller() {
-		pastCommands = new java.util.LinkedList<Command>();
-		futurCommands = new java.util.LinkedList<Command>();
+		pastCommands = new ets.util.containers.Stack<Command>();
+		futurCommands = new ets.util.containers.Stack<Command>();
 	}
 	
 	// --------------------------------------------------
@@ -21,23 +21,25 @@ public class Controller {
 	
 	public void performCommand(Command command) {
 		command.doCommand();
-		pastCommands.addLast(command);
+		pastCommands.push(command);
 		futurCommands.clear();
 	}
 	
 	public void undo() {
 		if (pastCommands.size() > 0) {
-			Command command = pastCommands.removeLast();
+			Command command = pastCommands.top();
+			pastCommands.pop();
 			command.undoCommand();
-			futurCommands.addLast(command);
+			futurCommands.push(command);
 		}
 	}
 	
 	public void redo() {
 		if (futurCommands.size() > 0) {
-			Command command = futurCommands.removeLast();
+			Command command = futurCommands.top();
+			futurCommands.pop();
 			command.doCommand();
-			pastCommands.addLast(command);
+			pastCommands.push(command);
 		}
 	}
 	
@@ -49,6 +51,6 @@ public class Controller {
 	// Attribut(s)
 	// --------------------------------------------------
 	
-	java.util.LinkedList<Command> pastCommands;
-	java.util.LinkedList<Command> futurCommands;
+	ets.util.containers.Stack<Command> pastCommands;
+	ets.util.containers.Stack<Command> futurCommands;
 }

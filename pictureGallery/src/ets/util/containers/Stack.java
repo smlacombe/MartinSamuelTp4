@@ -42,6 +42,10 @@ public class Stack<T> {
 		container.removeLast();
 	}
 	
+	public void clear() {
+		container.clear();
+	}
+	
 	// --------------------------------------------------
 	// Attribut(s)
 	// --------------------------------------------------
