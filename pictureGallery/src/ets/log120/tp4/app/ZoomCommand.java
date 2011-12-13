@@ -1,7 +1,7 @@
 package ets.log120.tp4.app;
 
 /**
- * Classe définissant la commande de zoom de la perspective (image)
+ * Classe définissant la commande de zoom de la perspective (image).
  */
 public class ZoomCommand implements Command {
 
@@ -9,6 +9,9 @@ public class ZoomCommand implements Command {
 	// Constructeur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Initialise la commande de zoom de la perspective (image).
+	 */
 	public ZoomCommand(Perspective subject, double augmentation) {
 		this.subject = subject;
 		this.augmentation = augmentation;
@@ -19,7 +22,7 @@ public class ZoomCommand implements Command {
 	// --------------------------------------------------
 
 	/**
-	 * Exécute la commande de zoom
+	 * Exécute la commande de zoom.
 	 */
 	@Override
 	public void doCommand() {
@@ -28,7 +31,7 @@ public class ZoomCommand implements Command {
 	}
 
 	/**
-	 * Défait la commande de zoom
+	 * Défait la commande de zoom.
 	 */
 	@Override
 	public void undoCommand() {

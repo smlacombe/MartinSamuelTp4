@@ -1,7 +1,7 @@
 package ets.log120.tp4.app;
 
 /**
- * Classe définissant la commande de translation de la perspective (image)
+ * Classe définissant la commande de translation de la perspective (image).
  */
 public class TranslationCommand implements Command {
 
@@ -9,6 +9,9 @@ public class TranslationCommand implements Command {
 	// Constructeur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Initialise la commande de translation de la perspective (image).
+	 */
 	public TranslationCommand(Perspective subject, int x, int y) {
 		this.subject = subject;
 		this.x = x;
@@ -20,7 +23,7 @@ public class TranslationCommand implements Command {
 	// --------------------------------------------------
 
 	/**
-	 * Exécute la commande de translation
+	 * Exécute la commande de translation.
 	 */
 	@Override
 	public void doCommand() {
@@ -31,7 +34,7 @@ public class TranslationCommand implements Command {
 	}
 
 	/**
-	 * Défait la commande de translation
+	 * Défait la commande de translation.
 	 */
 	@Override
 	public void undoCommand() {

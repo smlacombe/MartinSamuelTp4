@@ -37,7 +37,7 @@ public class MainWindow extends JFrame {
 		initLang();
 		setLayout(new BorderLayout());
 
-		controller = new Controller();
+		controller = Controller.getInstance();
 		initPerspective();
 		initTextView();
 		initGraphicalView();
