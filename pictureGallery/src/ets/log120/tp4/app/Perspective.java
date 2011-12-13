@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
+
 /**
  * Élément modèle du patron MVC utilisé pour stocker les attributs des
  * transformations d'une image.

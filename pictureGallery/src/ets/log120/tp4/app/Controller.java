@@ -12,7 +12,7 @@ public class Controller {
 	/**
 	 * Initialise le contrôleur.
 	 */
-	public Controller() {
+	private Controller() {
 		pastCommands = new ets.util.containers.Stack<Command>();
 		futurCommands = new ets.util.containers.Stack<Command>();
 	}
@@ -20,6 +20,14 @@ public class Controller {
 	// --------------------------------------------------
 	// Méthode(s)
 	// --------------------------------------------------
+	
+	public static Controller getInstance() {
+		if (controller == null) {
+			controller = new Controller();
+		}
+		
+		return controller;			
+	}
 	
 	/**
 	 * Exécute la commande passée en paramètre.
@@ -60,4 +68,5 @@ public class Controller {
 
 	private ets.util.containers.Stack<Command> pastCommands;
 	private ets.util.containers.Stack<Command> futurCommands;
+	private static Controller controller;
 }

@@ -14,7 +14,7 @@ public class ControllerTest {
 	@Test
 	public void testUndoMultipleZoom() {
 		Perspective perspective = PerspectiveFactory.makePerspective();
-		Controller controller = new Controller();
+		Controller controller = Controller.getInstance();
 		
 		assertEquals(1.0, perspective.getZoom(), 0.00001);
 		

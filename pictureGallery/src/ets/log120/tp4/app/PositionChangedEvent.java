@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class PositionChangedEvent extends java.util.Observable implements Serializable {
 
 	/**
-	 * Marquer l'élément observable comme changé
+	 * Marquer l'élément observable comme changé.
 	 */
 	@Override
 	public void setChanged() {
