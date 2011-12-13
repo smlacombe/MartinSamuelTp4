@@ -45,10 +45,7 @@ public class MainWindow extends JFrame {
 		initMenuBar();
 		addComponents();
 
-		ThumbnailPerpectiveChanged listener = new ThumbnailPerpectiveChanged();
-		perspective.imageChanged.addObserver(listener);
-
-		validate();
+		perspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
 
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,10 +62,9 @@ public class MainWindow extends JFrame {
 		perspective = PerspectiveFactory.makePerspective();
 
 		try {
-			perspective.setImage("vincent.jpg",
-					ImageIO.read(new File("vincent.jpg")));
-		} catch (IOException ex) {
-
+			perspective.setImage("vincent.jpg", ImageIO.read(new File("vincent.jpg")));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -91,13 +87,11 @@ public class MainWindow extends JFrame {
 			lang = new java.util.Properties();
 			lang.load(new java.io.FileInputStream("lang.fr"));
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Le fichier de langue "
-					+ fileName + " n'existe pas.");
+			JOptionPane.showMessageDialog(this, "Le fichier de langue " + fileName + " n'existe pas.");
 			System.exit(ERROR);
 		} catch (IOException e) {
-			JOptionPane
-					.showMessageDialog(this,
-							"Une erreur est survenue lors du chargement du fichier de langue");
+			JOptionPane.showMessageDialog(this,
+					"Une erreur est survenue lors du chargement du fichier de langue");
 		}
 	}
 
@@ -267,7 +261,6 @@ public class MainWindow extends JFrame {
 		@Override
 		public void update(Observable arg0, Object arg1) {
 			updateThumbnail();
-			thumbnail.repaint();
 		}
 	}
 
