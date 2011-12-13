@@ -1,7 +1,7 @@
 package ets.log120.tp4.app;
 
 /**
- * Controlleur de l'application
+ * Controlleur de l'application.
  */
 public class Controller {
 
@@ -9,6 +9,9 @@ public class Controller {
 	// Constructeur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Initialise le contrôleur.
+	 */
 	public Controller() {
 		pastCommands = new ets.util.containers.Stack<Command>();
 		futurCommands = new ets.util.containers.Stack<Command>();
@@ -19,7 +22,7 @@ public class Controller {
 	// --------------------------------------------------
 	
 	/**
-	 * Exécute la commande passée en paramètre
+	 * Exécute la commande passée en paramètre.
 	 */
 	public void performCommand(Command command) {
 		command.doCommand();
@@ -28,7 +31,7 @@ public class Controller {
 	}
 
 	/**
-	 * Défait (annule) la dernière commande exécutée
+	 * Défait (annule) la dernière commande exécutée.
 	 */
 	public void undo() {
 		if (pastCommands.size() > 0) {
@@ -40,7 +43,7 @@ public class Controller {
 	}
 
 	/**
-	 * Refait la dernière commande annulée
+	 * Refait la dernière commande annulée.
 	 */
 	public void redo() {
 		if (futurCommands.size() > 0) {

@@ -4,8 +4,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * Commande permettant de changer l'image de la perspective.
- * @author Martin Desharnais
- *
+ * 
  */
 public class ChangeImageCommand implements Command {
 
@@ -13,6 +12,9 @@ public class ChangeImageCommand implements Command {
 	// Constructeur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Initialise une commande de changement d'image.
+	 */
 	public ChangeImageCommand(Perspective subject, String newImageName,
 			BufferedImage newImage) {
 		this.subject = subject;
@@ -25,7 +27,7 @@ public class ChangeImageCommand implements Command {
 	// --------------------------------------------------
 
 	/**
-	 * Exécute la commande
+	 * Exécute la commande.
 	 */
 	@Override
 	public void doCommand() {
@@ -35,7 +37,7 @@ public class ChangeImageCommand implements Command {
 	}
 
 	/**
-	 * Défait la commande
+	 * Défait la commande.
 	 */
 	@Override
 	public void undoCommand() {

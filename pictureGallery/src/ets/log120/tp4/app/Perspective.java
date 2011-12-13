@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * Élément modèle du patron MVC utilisé pour stocker les attributs des
- * transformations d'une image
+ * transformations d'une image.
  */
 public class Perspective implements Serializable {
 
@@ -18,6 +18,9 @@ public class Perspective implements Serializable {
 	// Constructeur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Initialise la perspective.
+	 */
 	public Perspective() {
 		this.imageName = "";
 		this.image = null;
@@ -30,28 +33,28 @@ public class Perspective implements Serializable {
 	// --------------------------------------------------
 
 	/**
-	 * Retourne l'image de la perspective
+	 * Retourne l'image de la perspective.
 	 */
 	public BufferedImage getImage() {
 		return image;
 	}
 
 	/**
-	 * Retourne le chemin d'accès de l'image (perspective)
+	 * Retourne le chemin d'accès de l'image (perspective).
 	 */
 	public String getImageName() {
 		return imageName;
 	}
 
 	/**
-	 * Retourne le zoom actuel de l'image (perspective)
+	 * Retourne le zoom actuel de l'image (perspective).
 	 */
 	public double getZoom() {
 		return zoom;
 	}
 
 	/**
-	 * Retourne la position de l'image (perspective)
+	 * Retourne la position de l'image (perspective).
 	 */
 	public Point getPosition() {
 		return position;
@@ -62,7 +65,7 @@ public class Perspective implements Serializable {
 	// --------------------------------------------------
 
 	/**
-	 * Définit l'image de la perspective
+	 * Définit l'image de la perspective.
 	 */
 	public void setImage(String imageName, BufferedImage image) {
 		this.imageName = imageName;
@@ -75,7 +78,7 @@ public class Perspective implements Serializable {
 	}
 
 	/**
-	 * Définit le zoom de l'image (perspective)
+	 * Définit le zoom de l'image (perspective).
 	 */
 	public void setZoom(double value) {
 		zoom = value;
@@ -84,7 +87,7 @@ public class Perspective implements Serializable {
 	}
 
 	/**
-	 * Définit la position de l'image (perspective)
+	 * Définit la position de l'image (perspective).
 	 */
 	public void setPosition(Point value) {
 		position = value;
