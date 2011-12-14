@@ -52,12 +52,11 @@ public class GraphicalPerspectiveView extends JPanel {
 	}
 
 	private ImageComponent getImageComponent(Perspective p) {
-		ImageComponent component = new ImageComponent(perspective.getImage().getWidth(), perspective.getImage().getHeight());
+		ImageComponent component = new ImageComponent(500, 500);
 		component.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				controller.performCommand(new ZoomCommand(perspective, -1 * event.getWheelRotation() * 0.05));
-				updateScrollbarsMaxValue();
 			}
 		});
 		return component;
@@ -87,7 +86,7 @@ public class GraphicalPerspectiveView extends JPanel {
 		scrollBar.addAdjustmentListener(new ScrollBarHandler(new Functor() {
 			@Override
 			public void exec(int oldValue, int newValue) {
-				controller.performCommand(new TranslationCommand(perspective, -(newValue - oldValue), 0));
+				controller.performCommand(new TranslationCommand(perspective, newValue - oldValue, 0));
 			}
 		}));
 		return scrollBar;
@@ -98,7 +97,7 @@ public class GraphicalPerspectiveView extends JPanel {
 		scrollBar.addAdjustmentListener(new ScrollBarHandler(new Functor() {
 			@Override
 			public void exec(int oldValue, int newValue) {
-				controller.performCommand(new TranslationCommand(perspective, 0, -(newValue - oldValue)));
+				controller.performCommand(new TranslationCommand(perspective, 0, newValue - oldValue));
 			}
 		}));
 		return scrollBar;
@@ -127,8 +126,7 @@ public class GraphicalPerspectiveView extends JPanel {
 		zoomOriginalButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.performCommand(new ZoomCommand(perspective,
-						1 - perspective.getZoom()));
+				controller.performCommand(new ZoomCommand(perspective, 1 - perspective.getZoom()));
 			}
 		});
 

@@ -13,18 +13,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Observable;
+import java.util.Observer;
+
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import ets.log120.tp4.app.ChangeImageCommand;
 import ets.log120.tp4.app.Controller;
 import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.PerspectiveFactory;
+import ets.log120.tp4.app.PerspectiveUtil;
 
 public class MainWindow extends JFrame {
 
@@ -41,17 +48,20 @@ public class MainWindow extends JFrame {
 		initPerspective();
 		initTextView();
 		initGraphicalView();
-		initThumbnail();
 		initMenuBar();
 		addComponents();
-
-		perspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
 
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
+		try {
+			perspective.setImage("Image principale", ImageIO.read(new File("cplusplus.png")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// --------------------------------------------------
@@ -59,13 +69,17 @@ public class MainWindow extends JFrame {
 	// --------------------------------------------------
 
 	private void initPerspective() {
+		thumbnailPerspective = PerspectiveFactory.makePerspective();
+		thumbnailPerspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
+		
 		perspective = PerspectiveFactory.makePerspective();
-
-		try {
-			perspective.setImage("vincent.jpg", ImageIO.read(new File("vincent.jpg")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		perspective.imageChanged.addObserver(new Observer() {
+			@Override
+			public void update(Observable arg0, Object arg1) {
+				Perspective p = (Perspective) arg1;
+				thumbnailPerspective.setImage(p.getImageName(), p.getImage());
+			}
+		});
 	}
 
 	private void initTextView() {
@@ -95,22 +109,24 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	private void initThumbnail() {
-		thumbnail = new ImageComponent(200, 200);
-		updateThumbnail();
-	}
-
-	private void updateThumbnail() {
-		thumbnail.setImage(perspective.getImage(), 1, new Point(0, 0));
-	}
-
 	private void addComponents() {
+		JPanel panelLeft = new JPanel();
+		panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.PAGE_AXIS));
+		panelLeft.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		panelLeft.add(textView);
+		panelLeft.add(Box.createVerticalGlue());
+		panelLeft.add(thumbnail = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
+		add(panelLeft, BorderLayout.LINE_START);
+		 
+		 
 		add(graphicalView, BorderLayout.CENTER);
+		/*
 		textViewThumbnailBox = Box.createVerticalBox();
 		textViewThumbnailBox.add(textView);
 		textViewThumbnailBox.add(Box.createVerticalGlue());
 		textViewThumbnailBox.add(thumbnail);
 		add(textViewThumbnailBox, BorderLayout.WEST);
+		*/
 	}
 
 	/**
@@ -196,9 +212,9 @@ public class MainWindow extends JFrame {
 	 */
 	private JMenu getImageMenu() {
 		JMenu imageMenu = new JMenu(lang.getProperty("app.menu.image"));
-		JMenuItem openImageItem = new JMenuItem(
-				lang.getProperty("app.menu.image.change"));
+		JMenuItem openImageItem = new JMenuItem(lang.getProperty("app.menu.image.change"));
 		openImageItem.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser fc = new JFileChooser();
 				fc.setFileFilter(new MyFilter());
@@ -234,12 +250,14 @@ public class MainWindow extends JFrame {
 	private java.util.Properties lang;
 	private GraphicalPerspectiveView graphicalView;
 	private TextualPerspectiveView textView;
-	private Perspective perspective;
-	private Controller controller;
 	private ImageComponent thumbnail;
-	private Box textViewThumbnailBox;
-	static private final int WINDOW_WIDTH = 800;
-	static private final int WINDOW_HEIGHT = 600;
+	private Perspective perspective;
+	private Perspective thumbnailPerspective;
+	private Controller controller;
+	private static final int WINDOW_WIDTH = 800;
+	private static final int WINDOW_HEIGHT = 600;
+	private static final int THUMB_WIDTH = 256;
+	private static final int THUMB_HEIGHT = 256;
 
 	// --------------------------------------------------
 	// Classe(s) interne(s)
@@ -260,8 +278,11 @@ public class MainWindow extends JFrame {
 	private class ThumbnailPerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
-			updateThumbnail();
+			Perspective p = (Perspective) arg1;
+			thumbnail.setImage(
+					p.getImage(),
+					PerspectiveUtil.getZoomToFitDisplay(p, thumbnail.getWidth(), thumbnail.getHeight()),
+					p.getPosition());
 		}
 	}
-
 }

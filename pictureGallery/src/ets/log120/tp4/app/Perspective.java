@@ -75,7 +75,7 @@ public class Perspective implements Serializable {
 		imageChanged.notifyObservers(this);
 
 		if (image != null)
-			setPosition(new Point(0, 0));
+			setPosition(new Point(image.getWidth() / 2, image.getHeight() / 2));
 	}
 
 	/**
