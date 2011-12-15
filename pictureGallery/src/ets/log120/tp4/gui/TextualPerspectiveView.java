@@ -9,26 +9,30 @@ import ets.log120.tp4.app.Perspective;
 
 public class TextualPerspectiveView extends JPanel {
 	
-	public TextualPerspectiveView(Perspective perspective) {
+	public TextualPerspectiveView() {
 		super(new java.awt.GridBagLayout());
-		this.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		addProperty(0, 0, "Nom :", nameField = new javax.swing.JTextField(15));
 		addProperty(1, 0, "Zoom :", zoomField = new javax.swing.JTextField(15));
 		addProperty(2, 0, "Position :", positionField = new javax.swing.JTextField(15));
 		
-		PerpectiveChanged listener = new PerpectiveChanged();
-		perspective.imageChanged.addObserver(listener);
-		perspective.zoomChanged.addObserver(listener);
-		perspective.positionChanged.addObserver(listener);
-		
 		setMaximumSize(new java.awt.Dimension(getMaximumSize().width, getPreferredSize().height));
+	}
+	
+	public void setPerspective(Perspective p) {
+		PerpectiveChanged listener = new PerpectiveChanged();
+		p.imageChanged.addObserver(listener);
+		p.zoomChanged.addObserver(listener);
+		p.positionChanged.addObserver(listener);
+		
+		updateText(p);
 	}
 	
 	private void updateText(Perspective p) {
 		 nameField.setText(p.getImageName());
 		 zoomField.setText(percentage.format(p.getZoom()));
-		 positionField.setText(p.getPosition().toString());
+		 positionField.setText("(" + p.getPosition().x + ";" + p.getPosition().y + ")");
 	}
 	
 	 private void addProperty(int x, int y, String labelText, javax.swing.JTextField field) {

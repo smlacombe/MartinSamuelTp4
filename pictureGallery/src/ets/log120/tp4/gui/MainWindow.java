@@ -45,34 +45,37 @@ public class MainWindow extends JFrame {
 		setLayout(new BorderLayout());
 
 		controller = Controller.getInstance();
-		initPerspective();
-		initTextView();
-		initGraphicalView();
+		textView = new TextualPerspectiveView();
+		graphicalView = new GraphicalPerspectiveView(controller);
 		initMenuBar();
 		addComponents();
 
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
+		/*
 		try {
-			perspective.setImage("Image principale", ImageIO.read(new File("cplusplus.png")));
+			perspective = PerspectiveFactory.makePerspective(
+					"Image principale", ImageIO.read(new File("vincent.jpg")));
+			setPerspective(perspective);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	// --------------------------------------------------
 	// Méthode(s)
 	// --------------------------------------------------
 
-	private void initPerspective() {
-		thumbnailPerspective = PerspectiveFactory.makePerspective();
-		thumbnailPerspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
+	private void setPerspective(Perspective p) {
+		textView.setPerspective(p);
+		graphicalView.setPerspective(p);
 		
-		perspective = PerspectiveFactory.makePerspective();
 		perspective.imageChanged.addObserver(new Observer() {
 			@Override
 			public void update(Observable arg0, Object arg1) {
@@ -80,14 +83,10 @@ public class MainWindow extends JFrame {
 				thumbnailPerspective.setImage(p.getImageName(), p.getImage());
 			}
 		});
-	}
-
-	private void initTextView() {
-		textView = new TextualPerspectiveView(perspective);
-	}
-
-	private void initGraphicalView() {
-		graphicalView = new GraphicalPerspectiveView(controller, perspective);
+		
+		thumbnailPerspective = PerspectiveFactory.makePerspective();
+		thumbnailPerspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
+		thumbnailPerspective.setImage(p.getImageName(), p.getImage());
 	}
 
 	/**
@@ -120,13 +119,6 @@ public class MainWindow extends JFrame {
 		 
 		 
 		add(graphicalView, BorderLayout.CENTER);
-		/*
-		textViewThumbnailBox = Box.createVerticalBox();
-		textViewThumbnailBox.add(textView);
-		textViewThumbnailBox.add(Box.createVerticalGlue());
-		textViewThumbnailBox.add(thumbnail);
-		add(textViewThumbnailBox, BorderLayout.WEST);
-		*/
 	}
 
 	/**
@@ -189,15 +181,16 @@ public class MainWindow extends JFrame {
 
 	private void unSerializePerspective() {
 		try {
-			FileInputStream fichier = new FileInputStream("perspective.ser");
-			ObjectInputStream ois = new ObjectInputStream(fichier);
-			perspective = (Perspective) ois.readObject();
+			FileInputStream file = new FileInputStream("perspective.ser");
+			ObjectInputStream in = new ObjectInputStream(file);
+			perspective = (Perspective) in.readObject();
 
 			try {
 				perspective.setImage(perspective.getImageName(),
 						ImageIO.read(new File(perspective.getImageName())));
-			} catch (IOException ex) {
-				System.out.println("fail");
+				setPerspective(perspective);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
 		} catch (java.io.IOException e) {
@@ -230,8 +223,7 @@ public class MainWindow extends JFrame {
 						System.out.println("fail");
 					}
 
-					controller.performCommand(new ChangeImageCommand(
-							perspective, fileName, newImage));
+					controller.performCommand(new ChangeImageCommand(perspective, fileName, newImage));
 				} else {
 
 				}

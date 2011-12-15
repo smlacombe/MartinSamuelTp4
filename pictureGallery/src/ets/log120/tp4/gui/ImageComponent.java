@@ -11,9 +11,57 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 
 public class ImageComponent extends JComponent {
+	
+	// --------------------------------------------------
+	// Constructeur(s)
+	// --------------------------------------------------
+	
 	public ImageComponent(int width, int height) {
+		super();
 		displaySize = new Dimension(width, height);
-	}	
+	}
+	
+	// --------------------------------------------------
+	// Accesseur(s)
+	// --------------------------------------------------
+	
+	@Override
+	public Dimension getSize() {
+		return displaySize;
+	}
+	
+	@Override
+	public Dimension getMinimumSize() {
+		return displaySize;
+	}
+	
+	@Override
+	public Dimension getMaximumSize() {
+		return displaySize;
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return displaySize;
+	}
+	
+	// --------------------------------------------------
+	// Mutateur(s)
+	// --------------------------------------------------
+	
+	public int getScaledWidth() {
+		if (image != null)
+			return (int) (zoom * image.getWidth());
+		else
+			return 0;
+	}
+	
+	public int getScaledHeight() {
+		if (image != null)
+			return (int) (zoom * image.getHeight());
+		else
+			return 0;
+	}
 	
 	public void setImage(BufferedImage image, double zoom, Point position) {
 		this.image = image;
@@ -22,61 +70,33 @@ public class ImageComponent extends JComponent {
 		repaint();
 	}
 	
-	public int getScaledWidth() {
-		return (int) (displaySize.width * zoom);
-	}
-	
-	public int getScaledHeight() {
-		return (int) (displaySize.height * zoom);
-	}
-	
-	 @Override
-	 public Dimension getSize() {
-	 return displaySize;
-	 }
-
-	 @Override
-	 public Dimension getMinimumSize() {
-	 return displaySize;
-	 }
-
-	 @Override
-	 public Dimension getMaximumSize() {
-	 return displaySize;
-	 }
-
-	 @Override
-	 public Dimension getPreferredSize() {
-	 return displaySize;
-	 }
-	
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, displaySize.width, displaySize.height);
+		g.fillRect(0, 0, getSize().width, getSize().height);
 
 		if (image != null) {
-			int imageWidth = (int) (zoom * image.getWidth());
-			int imageHeight = (int) (zoom * image.getHeight());
+			int imageWidth = getScaledWidth();
+			int imageHeight = getScaledHeight();
 
-			if (imageWidth > displaySize.width || imageHeight > displaySize.height) {
+			if (imageWidth > getSize().width || imageHeight > getSize().height) {
 				// Image is larger than display area
 
-				int displayImageWidth = (int) (displaySize.width / zoom);
-				int displayImageHeight = (int) (displaySize.height / zoom);
+				int displayImageWidth = (int) (getSize().width / zoom);
+				int displayImageHeight = (int) (getSize().height / zoom);
 
 				int x = displayCenter.x - (displayImageWidth / 2);
 				int y = displayCenter.y - (displayImageHeight / 2);
 
 				g.drawImage(image,
-						0, 0, displaySize.width, displaySize.height,
+						0, 0, getSize().width, getSize().height,
 						x, y, x + displayImageWidth, y + displayImageHeight,
 						null);
 			} else {
 				// Image is smaller than display area
 
-				int x = (displaySize.width - imageWidth) / 2;
-				int y = (displaySize.height - imageHeight) / 2;
+				int x = (getSize().width - imageWidth) / 2;
+				int y = (getSize().height - imageHeight) / 2;
 
 				g.drawImage(image,
 						x, y, x + imageWidth, y + imageHeight,
@@ -89,6 +109,14 @@ public class ImageComponent extends JComponent {
 			g.drawLine(0, getSize().height, getSize().width, 0);
 		}
 	}
+	
+	// --------------------------------------------------
+	// Méthode(s)
+	// --------------------------------------------------
+
+	// --------------------------------------------------
+	// Attribut(s)
+	// --------------------------------------------------
 	
 	private Dimension displaySize;
 	private double zoom;
