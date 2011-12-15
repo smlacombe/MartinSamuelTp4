@@ -220,8 +220,12 @@ public class MainWindow extends JFrame {
 					BufferedImage newImage = null;
 					try {
 						newImage = ImageIO.read(new File(fileName));
-						Perspective p = PerspectiveFactory.makePerspective(fileName, newImage);
-						setPerspective(p);
+						if (perspective == null) {
+							Perspective p = PerspectiveFactory.makePerspective(fileName, newImage);
+							setPerspective(p);
+						} else {
+							controller.performCommand(new ChangeImageCommand(perspective, fileName, newImage));
+						}
 					} catch (IOException ex) {
 						System.out.println("fail");
 					}
