@@ -1,7 +1,6 @@
 package ets.log120.tp4.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -45,10 +44,9 @@ public class MainWindow extends JFrame {
 		setLayout(new BorderLayout());
 
 		controller = Controller.getInstance();
-		textView = new TextualPerspectiveView();
-		graphicalView = new GraphicalPerspectiveView(controller);
 		initMenuBar();
-		addComponents();
+		add(getLeftPanel(), BorderLayout.LINE_START);
+		add(graphicalView = new GraphicalPerspectiveView(controller), BorderLayout.CENTER);
 
 		setTitle(lang.getProperty("app.title"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -73,8 +71,10 @@ public class MainWindow extends JFrame {
 	// --------------------------------------------------
 
 	private void setPerspective(Perspective p) {
-		textView.setPerspective(p);
-		graphicalView.setPerspective(p);
+		perspective = p;
+		
+		textView.setPerspective(perspective);
+		graphicalView.setPerspective(perspective);
 		
 		perspective.imageChanged.addObserver(new Observer() {
 			@Override
@@ -108,17 +108,18 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	private void addComponents() {
-		JPanel panelLeft = new JPanel();
-		panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.PAGE_AXIS));
-		panelLeft.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		panelLeft.add(textView);
-		panelLeft.add(Box.createVerticalGlue());
-		panelLeft.add(thumbnail = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
-		add(panelLeft, BorderLayout.LINE_START);
-		 
-		 
-		add(graphicalView, BorderLayout.CENTER);
+	private JPanel getLeftPanel() {
+		final int MARGIN = 5;
+		
+		JPanel panel = new JPanel();
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		panel.setBorder(BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
+		panel.add(textView = new TextualPerspectiveView());
+		panel.add(Box.createVerticalGlue());
+		panel.add(thumbnail = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
+		
+		return panel;
 	}
 
 	/**
@@ -219,11 +220,11 @@ public class MainWindow extends JFrame {
 					BufferedImage newImage = null;
 					try {
 						newImage = ImageIO.read(new File(fileName));
+						Perspective p = PerspectiveFactory.makePerspective(fileName, newImage);
+						setPerspective(p);
 					} catch (IOException ex) {
 						System.out.println("fail");
 					}
-
-					controller.performCommand(new ChangeImageCommand(perspective, fileName, newImage));
 				} else {
 
 				}
