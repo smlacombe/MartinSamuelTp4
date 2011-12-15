@@ -1,14 +1,8 @@
 Décision: non-utilisation du patron memento pour offrir l'annulation des commandes.
 
-    Expliquez le problème rencontré
 L'énoncé du travail pratique nous indiquait que l'application devrait supporter les actions de défaire et de refaire des commandes appliquées sur une perspective. Ceci implique donc une des deux choses suivante: garder un historique des états de l'objet à un moment donné ou garder un historique des commandes exécutées.
 
-Dans le premier cas, il s'agit de l'application du patron memento. Nous n'avons pas opté pour l'utilisation de ce patron pour offrir la fonctionnalité de faire et défaire. Les raisons sont les suivantes: 
+Dans le premier cas, il s'agit de l'application du patron memento. Nous n'avons pas opté pour l'utilisation de ce patron pour offrir la fonctionnalité de faire et défaire pour la raison suivante: la simplicité des données à gérer dans la perspective. Nous nous sommes dit que le patron memento peut être utile lorsque les opérations, permettants de revenir à un état antérieur, sont nombreuses et complexes. Or dans notre cas, il s'agit tout simplement d'exécuter une commande qui ne fait d'autre chose que de modifier soit le zoom, la position et l'image. Nous avons donc conservé une historique des commandes passées et des commandes annulées, que nous réexcutons au besoins.
 
-Premièrement, il y a la simplicité des données à gérer dans la perspective. nous nous sommes dit que le patron memento peut être utile lorsque les opérations, permettants de revenir à un état antérieur, sont nombreuses et complexes. Or dans notre cas, il s'agit tout simplement d'exécuter une commande qui ne fait d'autre chose que de modifier soit le zoom, la position et l'image. Or 
-
-
-    Décrivez la solution retenue
-    Discutez des alternatives considérées
-    Discutez des améliorations possibles
+La solution de ne pas utiliser le patron mémento permet à notre l'architecture de notre logiciel d'être moins lourde. En effet, bien qu'un patron de conception de plus n'est pas mauvais, en ajouter un sans qu'il soit vraiment utile pourrait amener une maintenance future plus difficile parce qu'il s'agit quand même de maintenir des classes de plus. 
 
