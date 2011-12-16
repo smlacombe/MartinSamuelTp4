@@ -1,0 +1,11 @@
+--------------------------------------------------
+- Séparer les vues textuelle et graphique dans deux classes
+--------------------------------------------------
+
+Les consignes du travail pratique demandaient d'offir deux vues différentes représentant la même perspective. Nous avons décidés d'offrir une vue textuelle, affichant dans des champs textes les informations sur la perspective, ainsi qu'une vue graphique, affichant l'image et offrant la possibilité d'effectuer des zoom des des translations.
+
+La solution la plus évidante pour implémenter ces composants aurait été de les incluree dans la classe représentant l'interface graphique. Seulement, ceci aurait grandement diminué la cohésion de cette classe; Elle aurait été chargée d'afficher la fenêtre pricipale, de la sauvegarde et du chargement des perspectives, de l'affichage de la perspective textuelle, de l'affichage de la perspective graphique ainsi que de l'affichage de la miniature. De plus, d'un point de vu plus pratique, la classe aurait été très volumineuse ce qui aurait rendu toute maintenance difficile.
+
+Nous avons plutôt décidés de séparer les deux perspective dans deux classes distinctes. Celles-ci sont donc responsables de décider comment afficher leur représentation de la perspective. La classe principale de l'interface graphique n'a plus qu'à créer une instance de chaucune d'entre elle et de l'ajouter au bon endroit dans l'interface graphique. Son rôle consistant maintenant à rassembler les différents composants de l'inteface et de les afficher dans une seule fenêtre.
+
+Cette séparation a prouver ses qualités lorsque nous avons décidés de modifier complètement la vue textuelle, la faisant passer d'un simple champ texte multiligne à plusieures champs textes identifiés par des étiquettes. Nous avons pu effectuer toute les modifications nécessaire sans aucune modification du reste de l'application.
