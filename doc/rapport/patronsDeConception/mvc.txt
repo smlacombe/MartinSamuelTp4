@@ -1,0 +1,7 @@
+--------------------------------------------------
+- MVC
+--------------------------------------------------
+
+L'ensemble de notre programme est basé sur le patron MVC (Modèle, Vue et Controlleur). La classe "Perspective" représente le modèle des données que nous devons manipuler. Les classes "Command", ses descendants ainsi que la classe "Controller" représente le controlleur chargé de manipuler le modèle. Les classes "GraphicalPerspectiveView", "TextualPerspectiveView" ainsi que "MainWindow" représentent la vue servant à afficher le modèle.
+
+Lorsque le modèle change, la vue est prévenu grâce à l'utilisation du patron "Observeur". Lorsque la vue souhaite modifier le modèle, elle utilise le patron "Commande" afin de prévenir le controlleur qui se charge d'effectuer la modification.
