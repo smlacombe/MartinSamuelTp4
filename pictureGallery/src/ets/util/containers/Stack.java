@@ -1,5 +1,8 @@
 package ets.util.containers;
 
+/**
+ * Pile pour stocker les action à défaire et à refaire.
+ */
 public class Stack<T> {
 	
 	// --------------------------------------------------

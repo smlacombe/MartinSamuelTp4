@@ -32,6 +32,9 @@ import ets.log120.tp4.app.Perspective;
 import ets.log120.tp4.app.PerspectiveFactory;
 import ets.log120.tp4.app.PerspectiveUtil;
 
+/**
+ * Fenêtre principale de l'application.
+ */
 public class MainWindow extends JFrame {
 
 	// --------------------------------------------------
@@ -223,8 +226,8 @@ public class MainWindow extends JFrame {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String fileName = fc.getSelectedFile().getAbsolutePath();
 
-			if (!(fileName.endsWith(".ser")))
-				fileName = fileName.concat(".ser");
+			if (!(fileName.endsWith(SERIALIZATION_FILE_EXTENSION)))
+				fileName = fileName.concat(SERIALIZATION_FILE_EXTENSION);
 
 			FileOutputStream file = new FileOutputStream(fileName);
 			ObjectOutputStream out = new ObjectOutputStream(file);
@@ -294,6 +297,7 @@ public class MainWindow extends JFrame {
 	private static final int WINDOW_HEIGHT = 600;
 	private static final int THUMB_WIDTH = 256;
 	private static final int THUMB_HEIGHT = 256;
+	private static final String SERIALIZATION_FILE_EXTENSION = ".ser";
 
 	// --------------------------------------------------
 	// Classe(s) interne(s)
@@ -322,11 +326,11 @@ public class MainWindow extends JFrame {
 	class SerialFilter extends javax.swing.filechooser.FileFilter {
 		public boolean accept(File file) {
 			String filename = file.getName();
-			return filename.endsWith(".ser") || (file.isDirectory());
+			return filename.endsWith(SERIALIZATION_FILE_EXTENSION) || (file.isDirectory());
 		}
 
 		public String getDescription() {
-			return "*.ser";
+			return SERIALIZATION_FILE_EXTENSION;
 		}
 	}
 

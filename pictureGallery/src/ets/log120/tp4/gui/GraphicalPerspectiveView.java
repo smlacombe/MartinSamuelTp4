@@ -27,6 +27,9 @@ import ets.log120.tp4.app.PerspectiveUtil;
 import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
+/**
+ * Vue graphique de l'application.
+ */
 public class GraphicalPerspectiveView extends JPanel {
 
 	// --------------------------------------------------
@@ -54,7 +57,7 @@ public class GraphicalPerspectiveView extends JPanel {
 	 * Retourne un nouveau composant image
 	 */
 	private ImageComponent getImageComponent() {
-		ImageComponent component = new ImageComponent(525, 512);
+		ImageComponent component = new ImageComponent(DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT);
 
 		DragAndDropListener listener = new DragAndDropListener();
 		component.addMouseListener(listener);
@@ -65,7 +68,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				if (perspective != null) {
 					controller.performCommand(new ZoomCommand(perspective, -1
-							* event.getWheelRotation() * 0.05));
+							* event.getWheelRotation() * MOUSE_ZOOM_INCREMENT));
 				}
 			}
 		});
@@ -103,7 +106,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
 					controller
-							.performCommand(new ZoomCommand(perspective, 0.1));
+							.performCommand(new ZoomCommand(perspective, BUTTON_ZOOM_INCREMENT));
 				}
 			}
 		});
@@ -114,7 +117,7 @@ public class GraphicalPerspectiveView extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
 					controller
-							.performCommand(new ZoomCommand(perspective, -0.1));
+							.performCommand(new ZoomCommand(perspective, -BUTTON_ZOOM_INCREMENT));
 				}
 			}
 		});
@@ -200,7 +203,11 @@ public class GraphicalPerspectiveView extends JPanel {
 	private JButton redoButton;
 	private JButton zoomOriginalButton;
 	private JButton zoomFitBestButton;
-
+	private static final int DEFAULT_IMAGE_WIDTH = 525;
+	private static final int DEFAULT_IMAGE_HEIGHT = 512;
+	private static final double MOUSE_ZOOM_INCREMENT = 0.05;
+	private static final double BUTTON_ZOOM_INCREMENT = 0.1;
+	
 	/**
 	 * Classe servant à représenter l'observateur de la perspective
 	 */

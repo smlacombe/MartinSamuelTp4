@@ -10,6 +10,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+/**
+ * Composant image de l'application.
+ */
 public class ImageComponent extends JComponent {
 
 	// --------------------------------------------------

@@ -7,6 +7,9 @@ import javax.swing.JTextArea;
 
 import ets.log120.tp4.app.Perspective;
 
+/**
+ * Vue textuelle de l'application.
+ */
 public class TextualPerspectiveView extends JPanel {
 
 	// --------------------------------------------------

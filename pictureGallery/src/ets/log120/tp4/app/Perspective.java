@@ -25,7 +25,7 @@ public class Perspective implements Serializable {
 	public Perspective() {
 		this.imageName = "";
 		this.image = null;
-		this.zoom = 1.0;
+		this.zoom = DEFAULT_ZOOM;
 		this.position = new Point(0, 0);
 	}
 
@@ -108,4 +108,5 @@ public class Perspective implements Serializable {
 	private double zoom;
 	private Point position;
 	private static final long serialVersionUID = 1L;
+	private static double DEFAULT_ZOOM = 1.0;
 }
