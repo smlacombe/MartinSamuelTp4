@@ -1,0 +1,7 @@
+--------------------------------------------------
+- Observeur
+--------------------------------------------------
+
+Nous avons utilisés le patron "Observeur" pour que la classe perspective puisse prévenir ses clients en cas de modification de ses attributs. Comme expliqué dans la décision de conception sur les trois observable, nous voulions offrir la possibilité aux clients de la classe "Perspective" de s'abonner à la modification de lsur choix. La raison pour laquelle nous voulions procéder ainsi est que cette façon de faire est la plus générique et diminue le plus le couplage. Comme la classe "Perspective" ne peut pas savoir à l'avance comment vont fonctionner les vues permettant de l'afficher, elle se doit d'offrir l'interface la plus flexible.
+
+En séparant les différentes modifications dans des événements différents, les différentes vues peuvent décider de s'abonner à un seule événement, plusieurs ou bien à tous. Si différentes tâches doivent être effectuées, elle peuvent être misent dans des unités de code différentes. Si c'est toujours la même, il suffit d'abonner la même unité de code à tous les événements.

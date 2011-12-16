@@ -1,0 +1,5 @@
+--------------------------------------------------
+- Méthode fabrique
+--------------------------------------------------
+
+Lors du développement et du déboguage du programme, nous avions besoin de travailler avec des perspectives sans devoir toujours les charger manuellement avec l'option du menu "Fichier". Pour ce faire, nous avons écrit une méthode fabrique qui se chargait d'instancier de de configurer une perspective en fonction de différents paramètres. Nous n'avons pas inclus cette classe ("PerspectiveFactory") dans le diagramme de classe car elle n'est pas nécessaire au bon fonctionnement de l'application. Elle nous a simplement été utile lors du développement.
