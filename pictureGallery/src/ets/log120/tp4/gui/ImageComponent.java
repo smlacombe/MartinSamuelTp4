@@ -78,12 +78,26 @@ public class ImageComponent extends JComponent {
 		if (image != null) {
 			int imageWidth = getScaledWidth();
 			int imageHeight = getScaledHeight();
+			
+			/*
+			if (1.999 <= zoom && zoom <= 2.001) {
+				//System.out.println("Zoom: " + zoom);
+				System.out.println("Component");
+				System.out.println("    ImageSize: " + imageWidth + "x" + imageHeight);
+				System.out.println("    DisplayAreaSize: " + getSize().width + "x" + getSize().height);
+			}
+			//*/
 
 			if (imageWidth > getSize().width || imageHeight > getSize().height) {
 				// Image is larger than display area
 
 				int displayImageWidth = (int) (getSize().width / zoom);
 				int displayImageHeight = (int) (getSize().height / zoom);
+				
+				/*
+				if (1.999 <= zoom && zoom <= 2.001)
+					System.out.println("    DisplayImageSize: " + displayImageWidth + "x" + displayImageHeight);
+				//*/
 
 				int x = displayCenter.x - (displayImageWidth / 2);
 				int y = displayCenter.y - (displayImageHeight / 2);

@@ -54,16 +54,12 @@ public class MainWindow extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
+
 		/*
-		try {
-			perspective = PerspectiveFactory.makePerspective(
-					"Image principale", ImageIO.read(new File("vincent.jpg")));
-			setPerspective(perspective);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
+		 * try { perspective = PerspectiveFactory.makePerspective("Image principale", ImageIO
+		 * .read(new File("cplusplus.png"))); setPerspective(perspective); } catch (IOException e) {
+		 * e.printStackTrace(); } //
+		 */
 	}
 
 	// --------------------------------------------------
@@ -72,10 +68,10 @@ public class MainWindow extends JFrame {
 
 	private void setPerspective(Perspective p) {
 		perspective = p;
-		
+
 		textView.setPerspective(perspective);
 		graphicalView.setPerspective(perspective);
-		
+
 		perspective.imageChanged.addObserver(new Observer() {
 			@Override
 			public void update(Observable arg0, Object arg1) {
@@ -83,15 +79,14 @@ public class MainWindow extends JFrame {
 				thumbnailPerspective.setImage(p.getImageName(), p.getImage());
 			}
 		});
-		
+
 		thumbnailPerspective = PerspectiveFactory.makePerspective();
 		thumbnailPerspective.imageChanged.addObserver(new ThumbnailPerpectiveChanged());
 		thumbnailPerspective.setImage(p.getImageName(), p.getImage());
 	}
 
 	/**
-	 * Initialise le fichier de propriétés contenant le texte à afficher à
-	 * l'utilisateur.
+	 * Initialise le fichier de propriétés contenant le texte à afficher à l'utilisateur.
 	 */
 	private void initLang() {
 		final String fileName = "lang.fr";
@@ -100,25 +95,27 @@ public class MainWindow extends JFrame {
 			lang = new java.util.Properties();
 			lang.load(new java.io.FileInputStream("lang.fr"));
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Le fichier de langue " + fileName + " n'existe pas.");
+			JOptionPane.showMessageDialog(this, "Le fichier de langue " + fileName
+					+ " n'existe pas.");
 			System.exit(ERROR);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this,
 					"Une erreur est survenue lors du chargement du fichier de langue");
+			System.exit(ERROR);
 		}
 	}
 
 	private JPanel getLeftPanel() {
 		final int MARGIN = 5;
-		
+
 		JPanel panel = new JPanel();
-		
+
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setBorder(BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
 		panel.add(textView = new TextualPerspectiveView());
 		panel.add(Box.createVerticalGlue());
 		panel.add(thumbnail = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
-		
+
 		return panel;
 	}
 
@@ -137,8 +134,7 @@ public class MainWindow extends JFrame {
 	 */
 	private JMenu getFileMenu() {
 		JMenu fileMenu = new JMenu(lang.getProperty("app.menu.file"));
-		JMenuItem exitItem = new JMenuItem(
-				lang.getProperty("app.menu.file.exit"));
+		JMenuItem exitItem = new JMenuItem(lang.getProperty("app.menu.file.exit"));
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				System.exit(0);
@@ -146,20 +142,38 @@ public class MainWindow extends JFrame {
 		});
 		fileMenu.add(exitItem);
 
-		JMenuItem saveItem = new JMenuItem(
-				lang.getProperty("app.menu.file.save"));
+		JMenuItem saveItem = new JMenuItem(lang.getProperty("app.menu.file.save"));
 		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				serializePerspective();
+				if (perspective != null) {
+					try {
+						serializePerspective();
+						JOptionPane.showMessageDialog(MainWindow.this, lang
+								.getProperty("app.dialog.fileSaved"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+
+				}
 			}
 		});
 
 		fileMenu.add(saveItem);
-		JMenuItem openPerspectiveItem = new JMenuItem(
-				lang.getProperty("app.menu.file.openPerspective"));
+		JMenuItem openPerspectiveItem = new JMenuItem(lang
+				.getProperty("app.menu.file.openPerspective"));
 		openPerspectiveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				unSerializePerspective();
+				try {
+					unSerializePerspective();
+				} catch (FileNotFoundException e) {
+					JOptionPane.showMessageDialog(MainWindow.this, lang
+							.getProperty("app.dialog.fileNotFound"));
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(MainWindow.this, lang
+							.getProperty("app.dialog.unrecoverableError"));
+					System.exit(ERROR);
+				}
 			}
 		});
 
@@ -168,37 +182,23 @@ public class MainWindow extends JFrame {
 		return fileMenu;
 	}
 
-	private void serializePerspective() {
-		try {
-			FileOutputStream fichier = new FileOutputStream("perspective.ser");
-			ObjectOutputStream oos = new ObjectOutputStream(fichier);
-			oos.writeObject(perspective);
-			oos.flush();
-			oos.close();
-		} catch (java.io.IOException e) {
-			e.printStackTrace();
-		}
+	private void serializePerspective() throws IOException {
+		FileOutputStream file = new FileOutputStream("perspective.ser");
+		ObjectOutputStream out = new ObjectOutputStream(file);
+		out.writeObject(perspective);
+		out.flush();
+		out.close();
 	}
 
-	private void unSerializePerspective() {
-		try {
-			FileInputStream file = new FileInputStream("perspective.ser");
-			ObjectInputStream in = new ObjectInputStream(file);
-			perspective = (Perspective) in.readObject();
-
-			try {
-				perspective.setImage(perspective.getImageName(),
-						ImageIO.read(new File(perspective.getImageName())));
-				setPerspective(perspective);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} catch (java.io.IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	private void unSerializePerspective() throws IOException, FileNotFoundException,
+			ClassNotFoundException {
+		FileInputStream file = new FileInputStream("perspective.ser");
+		ObjectInputStream in = new ObjectInputStream(file);
+		perspective = (Perspective) in.readObject();
+		perspective.setImage(perspective.getImageName(), ImageIO.read(new File(perspective
+				.getImageName())));
+		setPerspective(perspective);
+		throw new IOException("test");
 	}
 
 	/**
@@ -224,19 +224,16 @@ public class MainWindow extends JFrame {
 							Perspective p = PerspectiveFactory.makePerspective(fileName, newImage);
 							setPerspective(p);
 						} else {
-							controller.performCommand(new ChangeImageCommand(perspective, fileName, newImage));
+							controller.performCommand(new ChangeImageCommand(perspective, fileName,
+									newImage));
 						}
 					} catch (IOException ex) {
 						System.out.println("fail");
 					}
-				} else {
-
 				}
 			}
 		});
-
 		imageMenu.add(openImageItem);
-
 		return imageMenu;
 	}
 
@@ -276,10 +273,8 @@ public class MainWindow extends JFrame {
 		@Override
 		public void update(Observable arg0, Object arg1) {
 			Perspective p = (Perspective) arg1;
-			thumbnail.setImage(
-					p.getImage(),
-					PerspectiveUtil.getZoomToFitDisplay(p, thumbnail.getWidth(), thumbnail.getHeight()),
-					p.getPosition());
+			thumbnail.setImage(p.getImage(), PerspectiveUtil.getZoomToFitDisplay(p, thumbnail
+					.getWidth(), thumbnail.getHeight()), p.getPosition());
 		}
 	}
 }

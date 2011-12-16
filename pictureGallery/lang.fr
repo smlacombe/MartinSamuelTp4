@@ -5,3 +5,6 @@ app.menu.file.save=Sauvegarder
 app.menu.file.openPerspective=Ouvrir perspective
 app.menu.image=Image
 app.menu.image.change=Changer l'image
+app.dialog.fileSaved=La sauvegarde a bien été effectuée.
+app.dialog.fileNotFound=Aucune sauvegarde n'a pu être trouvée.
+app.dialog.unrecoverableError=Une erreur inconnue s'est produite. Veuillez prévenir l'équipe technique.
