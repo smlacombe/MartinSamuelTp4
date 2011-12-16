@@ -173,7 +173,7 @@ public class GraphicalPerspectiveView extends JPanel {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if ((buttonPressed && e.getButton() == MouseEvent.BUTTON1) && !(perspective==null)) {
+			if ((buttonPressed && e.getButton() == MouseEvent.BUTTON1) && !(perspective==null) && (imageComponent.getScaledWidth() > getSize().width || imageComponent.getScaledHeight() > getSize().height)) {
 				buttonPressed = false;
 		
 				int horizontalTranslation = (int) ((pressedPosition.x - e.getPoint().x) / perspective.getZoom());
