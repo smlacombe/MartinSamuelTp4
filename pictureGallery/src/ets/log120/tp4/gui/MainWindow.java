@@ -202,7 +202,6 @@ public class MainWindow extends JFrame {
 				fileName = fileName.concat(".ser");
 						
 			FileOutputStream file = new FileOutputStream(fileName);
-			System.out.print("dsds" + fileName);
 			ObjectOutputStream out = new ObjectOutputStream(file);
 			out.writeObject(perspective);
 			out.flush();
