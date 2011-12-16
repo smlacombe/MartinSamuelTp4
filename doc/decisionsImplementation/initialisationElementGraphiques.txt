@@ -1,0 +1,7 @@
+Décision d'implémentation: Refactoring pour l'initialistion d'éléments graphiques
+
+L'interface graphique de notre logiciel comporte un certain nombre d'éléments graphiques comme des boutons, des barres de défilement, etc. Ces composants doivent êtres initialisés d'une quelquonque façon pour y être ajoutée à l'interface graphique. 
+
+Notre première implémentation de ce procédé a été de créer des méthodes "initComponent" où « component » est le composant à initialiser. Ces méthodes ne faisant que l'initialisation, c'est à dire définir les propriétés des composants étant des attributs de la classes, étaient suivient de l'ajout de ces composants à l'interface graphique. Ce procédé entraine une diminution de la lisibilité du code. On voit des méthodes d'initialisation suivies de l'opération d'ajout utilisant le nom d'attribut qui est le composant graphique en question et ce code devient moins lisible parce qu'on doit s'efforcer de faire le lien entre le composant ajouté et le composant initialisé. 
+
+Nous avons améliorer ce procédé en utilisant le principe suivant: on utilise une méthode « getNomElement » qui retourne une instance du composant déjà intialisé que l'on veut avoir dans notre interface. Le résultat de cette méthode qui est le composant lui même est fournit à la méthode « add » d'une classe du client pour y être ajouté. La compréhension du code est ainsi améliorée.
