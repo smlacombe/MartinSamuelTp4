@@ -1,0 +1,7 @@
+--------------------------------------------------
+- Adapteur
+--------------------------------------------------
+
+Pour implémenter la classe "Controller", nous avions besoin d'un conteneur offrant une sémantique LIFO (Last In First Out). Parmi les classes offertes par la bibliothèque standard, la classe "Deque" est celle se raprochant le plus de ce dont nous avions besoin. Seulement, elle offre plus de fonctionnalités qu'une simple pile. Dans le but de respecter la règle du moindre privilège, nous avons crus qu'il ne fallait pas utiliser de conteneur offrant des fonctionnalités ne devant pas être utilisées.
+
+Nous avons donc produit une classe "Stack" qui sert simplement à offrir une interface réduite sur une "Deque". Ainsi les seule méthodes permettant de modifier la pile sont une méthode permettant d'ajouter un élément sur le dessus la pile, une méthode permettant de supprimer l'élément sur le dessus, une méthode permettant de récupérer l'élément sur le dessus ainsi qu'une méthode permettant de vider complètement la pile.
