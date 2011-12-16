@@ -55,19 +55,15 @@ public class MainWindow extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
-
-		/*
-		 * try { perspective =
-		 * PerspectiveFactory.makePerspective("Image principale", ImageIO
-		 * .read(new File("cplusplus.png"))); setPerspective(perspective); }
-		 * catch (IOException e) { e.printStackTrace(); } //
-		 */
 	}
 
 	// --------------------------------------------------
-	// Méthode(s)
+	// Mutateur(s)
 	// --------------------------------------------------
 
+	/**
+	 * Définie la perspective.
+	 */
 	private void setPerspective(Perspective p) {
 		perspective = p;
 
@@ -88,28 +84,13 @@ public class MainWindow extends JFrame {
 		thumbnailPerspective.setImage(p.getImageName(), p.getImage());
 	}
 
+	// --------------------------------------------------
+	// Accesseur(s)
+	// --------------------------------------------------
+
 	/**
-	 * Initialise le fichier de propriétés contenant le texte à afficher à
-	 * l'utilisateur.
+	 * Retourne le JPanel de droite.
 	 */
-	private void initLang() {
-		final String fileName = "lang.fr";
-
-		try {
-			lang = new java.util.Properties();
-			lang.load(new java.io.FileInputStream("lang.fr"));
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Le fichier de langue "
-					+ fileName + " n'existe pas.");
-			System.exit(ERROR);
-		} catch (IOException e) {
-			JOptionPane
-					.showMessageDialog(this,
-							"Une erreur est survenue lors du chargement du fichier de langue");
-			System.exit(ERROR);
-		}
-	}
-
 	private JPanel getLeftPanel() {
 		final int MARGIN = 5;
 
@@ -123,16 +104,6 @@ public class MainWindow extends JFrame {
 		panel.add(thumbnail = new ImageComponent(THUMB_WIDTH, THUMB_HEIGHT));
 
 		return panel;
-	}
-
-	/**
-	 * Initialise la barre de menu.
-	 */
-	private void initMenuBar() {
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(getFileMenu());
-		menuBar.add(getImageMenu());
-		setJMenuBar(menuBar);
 	}
 
 	/**
@@ -190,45 +161,6 @@ public class MainWindow extends JFrame {
 		return fileMenu;
 	}
 
-	private void serializePerspective() throws IOException {
-		final JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new SerialFilter());
-		int returnVal = fc.showSaveDialog(getContentPane());
-		
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String fileName = fc.getSelectedFile().getAbsolutePath();
-			
-			if (!(fileName.endsWith(".ser")))
-				fileName = fileName.concat(".ser");
-						
-			FileOutputStream file = new FileOutputStream(fileName);
-			ObjectOutputStream out = new ObjectOutputStream(file);
-			out.writeObject(perspective);
-			out.flush();
-			out.close();
-		}
-	}
-
-	private void unSerializePerspective() throws IOException,
-			FileNotFoundException, ClassNotFoundException {
-
-		final JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new SerialFilter());
-
-		int returnVal = fc.showOpenDialog(getContentPane());
-
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String fileName = fc.getSelectedFile().getAbsolutePath();
-			FileInputStream file = new FileInputStream(fileName);
-			ObjectInputStream in = new ObjectInputStream(file);
-			perspective = (Perspective) in.readObject();
-			perspective.setImage(perspective.getImageName(),
-					ImageIO.read(new File(perspective.getImageName())));
-			setPerspective(perspective);
-		}
-
-	}
-
 	/**
 	 * Retourne le menu « Image » de l'application.
 	 */
@@ -268,6 +200,86 @@ public class MainWindow extends JFrame {
 	}
 
 	// --------------------------------------------------
+	// Méthodes(s)
+	// --------------------------------------------------
+	/**
+	 * Initialise la barre de menu.
+	 */
+	private void initMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(getFileMenu());
+		menuBar.add(getImageMenu());
+		setJMenuBar(menuBar);
+	}
+
+	/**
+	 * Sérialise la perspective.
+	 */
+	private void serializePerspective() throws IOException {
+		final JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new SerialFilter());
+		int returnVal = fc.showSaveDialog(getContentPane());
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String fileName = fc.getSelectedFile().getAbsolutePath();
+
+			if (!(fileName.endsWith(".ser")))
+				fileName = fileName.concat(".ser");
+
+			FileOutputStream file = new FileOutputStream(fileName);
+			ObjectOutputStream out = new ObjectOutputStream(file);
+			out.writeObject(perspective);
+			out.flush();
+			out.close();
+		}
+	}
+
+	/**
+	 * Désérialise la perspective.
+	 */
+	private void unSerializePerspective() throws IOException,
+			FileNotFoundException, ClassNotFoundException {
+
+		final JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new SerialFilter());
+
+		int returnVal = fc.showOpenDialog(getContentPane());
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String fileName = fc.getSelectedFile().getAbsolutePath();
+			FileInputStream file = new FileInputStream(fileName);
+			ObjectInputStream in = new ObjectInputStream(file);
+			perspective = (Perspective) in.readObject();
+			perspective.setImage(perspective.getImageName(),
+					ImageIO.read(new File(perspective.getImageName())));
+			setPerspective(perspective);
+		}
+
+	}
+
+	/**
+	 * Initialise le fichier de propriétés contenant le texte à afficher à
+	 * l'utilisateur.
+	 */
+	private void initLang() {
+		final String fileName = "lang.fr";
+
+		try {
+			lang = new java.util.Properties();
+			lang.load(new java.io.FileInputStream("lang.fr"));
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Le fichier de langue "
+					+ fileName + " n'existe pas.");
+			System.exit(ERROR);
+		} catch (IOException e) {
+			JOptionPane
+					.showMessageDialog(this,
+							"Une erreur est survenue lors du chargement du fichier de langue");
+			System.exit(ERROR);
+		}
+	}
+
+	// --------------------------------------------------
 	// Attribut(s)
 	// --------------------------------------------------
 
@@ -286,6 +298,10 @@ public class MainWindow extends JFrame {
 	// --------------------------------------------------
 	// Classe(s) interne(s)
 	// --------------------------------------------------
+
+	/**
+	 * Classe définissant le filtre pour les image pour des boîtes de dialog.
+	 */
 	class ImageFilter extends javax.swing.filechooser.FileFilter {
 		public boolean accept(File file) {
 			String filename = file.getName();
@@ -298,7 +314,11 @@ public class MainWindow extends JFrame {
 			return "*.png, *.jpg, *.jpeg *.gif";
 		}
 	}
-	
+
+	/**
+	 * Classe définissant le filtre pour les fichiers java sérialisés pour des
+	 * boîtes de dialog.
+	 */
 	class SerialFilter extends javax.swing.filechooser.FileFilter {
 		public boolean accept(File file) {
 			String filename = file.getName();
@@ -310,6 +330,10 @@ public class MainWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Classe observatrice changeant la miniature en cas de mutation de la
+	 * perspective.
+	 */
 	private class ThumbnailPerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {

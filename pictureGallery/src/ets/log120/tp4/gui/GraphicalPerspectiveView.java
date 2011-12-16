@@ -28,37 +28,56 @@ import ets.log120.tp4.app.TranslationCommand;
 import ets.log120.tp4.app.ZoomCommand;
 
 public class GraphicalPerspectiveView extends JPanel {
+
+	// --------------------------------------------------
+	// Constructeur(s)
+	// --------------------------------------------------
+
+	/**
+	 * Initialise une nouvelle vue graphique
+	 */
 	public GraphicalPerspectiveView(Controller controller) {
 		super(new BorderLayout());
 		setBackground(Color.BLACK);
-		
+
 		this.controller = controller;
 
 		add(getToolBar(), BorderLayout.NORTH);
 		add(imageComponent = getImageComponent(), BorderLayout.CENTER);
 	}
 
+	// --------------------------------------------------
+	// Accesseur(s)
+	// --------------------------------------------------
+
+	/**
+	 * Retourne un nouveau composant image
+	 */
 	private ImageComponent getImageComponent() {
 		ImageComponent component = new ImageComponent(525, 512);
-		
+
 		DragAndDropListener listener = new DragAndDropListener();
 		component.addMouseListener(listener);
 		component.addMouseMotionListener(listener);
-		
+
 		component.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				if (perspective != null) {
-					controller.performCommand(new ZoomCommand(perspective, -1 * event.getWheelRotation() * 0.05));
+					controller.performCommand(new ZoomCommand(perspective, -1
+							* event.getWheelRotation() * 0.05));
 				}
 			}
 		});
 		return component;
 	}
 
+	/**
+	 * Retourne la barre d'outils de l'application
+	 */
 	private JToolBar getToolBar() {
 		initButton();
-		
+
 		JToolBar toolBar = new JToolBar();
 		toolBar.add(zoomInButton);
 		toolBar.add(zoomOutButton);
@@ -66,17 +85,25 @@ public class GraphicalPerspectiveView extends JPanel {
 		toolBar.add(zoomFitBestButton);
 		toolBar.add(undoButton);
 		toolBar.add(redoButton);
-		
+
 		return toolBar;
 	}
 
+	// --------------------------------------------------
+	// Méthodes
+	// --------------------------------------------------
+
+	/**
+	 * Initialise les boutons de la barres d'outils.
+	 */
 	private void initButton() {
 		zoomInButton = new JButton(new ImageIcon("icon/zoom-in.png"));
 		zoomInButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
-					controller.performCommand(new ZoomCommand(perspective, 0.1));
+					controller
+							.performCommand(new ZoomCommand(perspective, 0.1));
 				}
 			}
 		});
@@ -86,28 +113,34 @@ public class GraphicalPerspectiveView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
-					controller.performCommand(new ZoomCommand(perspective, -0.1));
+					controller
+							.performCommand(new ZoomCommand(perspective, -0.1));
 				}
 			}
 		});
 
-		zoomOriginalButton = new JButton(new ImageIcon("icon/zoom-original.png"));
+		zoomOriginalButton = new JButton(
+				new ImageIcon("icon/zoom-original.png"));
 		zoomOriginalButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
-					controller.performCommand(new ZoomCommand(perspective, 1 - perspective.getZoom()));
+					controller.performCommand(new ZoomCommand(perspective,
+							1 - perspective.getZoom()));
 				}
 			}
 		});
-		
+
 		zoomFitBestButton = new JButton(new ImageIcon("icon/zoom-fit-best.png"));
 		zoomFitBestButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (perspective != null) {
-					double zoom = PerspectiveUtil.getZoomToFitDisplay(perspective, imageComponent.getSize().width, imageComponent.getSize().height);
-					controller.performCommand(new ZoomCommand(perspective, zoom - perspective.getZoom()));
+					double zoom = PerspectiveUtil.getZoomToFitDisplay(
+							perspective, imageComponent.getSize().width,
+							imageComponent.getSize().height);
+					controller.performCommand(new ZoomCommand(perspective, zoom
+							- perspective.getZoom()));
 				}
 			}
 		});
@@ -129,20 +162,34 @@ public class GraphicalPerspectiveView extends JPanel {
 		});
 	}
 
+	/**
+	 * Met à jour l'image affichée selon la perspective.
+	 */
 	private void updateImage(Perspective p) {
 		imageComponent.setImage(p.getImage(), p.getZoom(), p.getPosition());
 	}
-	
+
+	// --------------------------------------------------
+	// Mutateur(s)
+	// --------------------------------------------------
+
+	/**
+	 * Définit la perspective et tous ces observateurs.
+	 */
 	public void setPerspective(Perspective p) {
 		perspective = p;
-		
+
 		PerpectiveChanged listener = new PerpectiveChanged();
 		perspective.imageChanged.addObserver(listener);
 		perspective.zoomChanged.addObserver(listener);
 		perspective.positionChanged.addObserver(listener);
-		
+
 		updateImage(perspective);
 	}
+
+	// --------------------------------------------------
+	// Attribut(s)
+	// --------------------------------------------------
 
 	private Perspective perspective;
 	private Controller controller;
@@ -154,6 +201,9 @@ public class GraphicalPerspectiveView extends JPanel {
 	private JButton zoomOriginalButton;
 	private JButton zoomFitBestButton;
 
+	/**
+	 * Classe servant à représenter l'observateur de la perspective
+	 */
 	private class PerpectiveChanged implements java.util.Observer {
 		@Override
 		public void update(Observable arg0, Object arg1) {
@@ -161,8 +211,19 @@ public class GraphicalPerspectiveView extends JPanel {
 			updateImage(p);
 		}
 	}
-		
+
+	/**
+	 * Écouteur des événements de souris portés sur l'image.
+	 */
 	private class DragAndDropListener extends MouseAdapter {
+		// --------------------------------------------------
+		// Méthode(s)
+		// --------------------------------------------------
+
+		/**
+		 * Méthode définissant l'action exécutée lors de l'événement de clique
+		 * de la souris sur l'image.
+		 */
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1) {
@@ -171,32 +232,52 @@ public class GraphicalPerspectiveView extends JPanel {
 			}
 		}
 
+		/**
+		 * Méthode définissant l'action exécutée lors de l'événement de
+		 * relâchement de la souris sur l'image.
+		 */
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if ((buttonPressed && e.getButton() == MouseEvent.BUTTON1) && !(perspective==null) && (imageComponent.getScaledWidth() > getSize().width || imageComponent.getScaledHeight() > getSize().height)) {
+			if ((buttonPressed && e.getButton() == MouseEvent.BUTTON1)
+					&& !(perspective == null)
+					&& (imageComponent.getScaledWidth() > getSize().width || imageComponent
+							.getScaledHeight() > getSize().height)) {
 				buttonPressed = false;
-		
-				int horizontalTranslation = (int) ((pressedPosition.x - e.getPoint().x) / perspective.getZoom());
-				int verticalTranslation = (int) ((pressedPosition.y - e.getPoint().y) / perspective.getZoom());
-				
-				controller.performCommand(new TranslationCommand(
-						perspective,
-						horizontalTranslation,
-						verticalTranslation));
+
+				int horizontalTranslation = (int) ((pressedPosition.x - e
+						.getPoint().x) / perspective.getZoom());
+				int verticalTranslation = (int) ((pressedPosition.y - e
+						.getPoint().y) / perspective.getZoom());
+
+				controller.performCommand(new TranslationCommand(perspective,
+						horizontalTranslation, verticalTranslation));
 			}
 		}
 
+		/**
+		 * Méthode définissant l'action exécutée lors de l'événement de souris
+		 * draguée sur l'image.
+		 */
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if ((buttonPressed) && !(perspective==null)) {
-				int horizontalTranslation = (int) ((pressedPosition.x - e.getPoint().x) / perspective.getZoom());
-				int verticalTranslation = (int) ((pressedPosition.y - e.getPoint().y) / perspective.getZoom());
+			if ((buttonPressed) && !(perspective == null)) {
+				int horizontalTranslation = (int) ((pressedPosition.x - e
+						.getPoint().x) / perspective.getZoom());
+				int verticalTranslation = (int) ((pressedPosition.y - e
+						.getPoint().y) / perspective.getZoom());
 
-				imageComponent.setImage(perspective.getImage(), perspective.getZoom(), new Point(
-						perspective.getPosition().x + horizontalTranslation,
-						perspective.getPosition().y + verticalTranslation));
+				imageComponent.setImage(
+						perspective.getImage(),
+						perspective.getZoom(),
+						new Point(perspective.getPosition().x
+								+ horizontalTranslation, perspective
+								.getPosition().y + verticalTranslation));
 			}
 		}
+
+		// --------------------------------------------------
+		// Attribut(s)
+		// --------------------------------------------------
 
 		private boolean buttonPressed;
 		private Point pressedPosition;
