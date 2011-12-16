@@ -1,8 +1,11 @@
 package ets.log120.tp4.app;
 
-import java.awt.Point;
-
 public class PerspectiveUtil {
+
+	/**
+	 * Retourne le zoom nécessaire pour afficher complètement l'image de la perspective dans une
+	 * zone dont la taille est données en paramètre.
+	 */
 	public static double getZoomToFitDisplay(Perspective p, int width, int height) {
 		double bestZoom = BEST_ZOOM;
 
@@ -13,6 +16,6 @@ public class PerspectiveUtil {
 
 		return Math.min(bestZoom, BEST_ZOOM);
 	}
-	
+
 	private final static double BEST_ZOOM = 1.0;
 }
