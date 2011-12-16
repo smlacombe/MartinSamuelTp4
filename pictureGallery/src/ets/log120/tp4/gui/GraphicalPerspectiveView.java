@@ -142,7 +142,6 @@ public class GraphicalPerspectiveView extends JPanel {
 		perspective.positionChanged.addObserver(listener);
 		
 		updateImage(perspective);
-		updateScrollBar(perspective);
 	}
 
 	private Perspective perspective;
@@ -160,65 +159,9 @@ public class GraphicalPerspectiveView extends JPanel {
 		public void update(Observable arg0, Object arg1) {
 			Perspective p = (Perspective) arg1;
 			updateImage(p);
-			updateScrollBar(p);
 		}
 	}
-	
-	private void updateScrollBar(Perspective p) {
-		/*
-		if (p.getImage() != null) {
-			isLoadingScrollBar = true;
-			
-			int imageScaledWidth = image.getScaledWidth();
 		
-			int displayImageWidth = (int) (image.getSize().width / p.getZoom());
-			int displayImageHeight = (int) (image.getSize().height / p.getZoom());
-			
-			double horizontalSurplusRatio = (imageScaledWidth - displayImageWidth) / (double) imageScaledWidth; 
-			int widthSurplus = Math.max(0, (int) (horizontalSurplusRatio * p.getImage().getWidth()));
-			
-			int heightSurplus = Math.max(0, image.getScaledHeight() - displayImageHeight / p.getImage().getHeight());
-			
-			if (1.999 <= p.getZoom() && p.getZoom() <= 2.001) {
-				System.out.println("Window");
-				System.out.println("    ImageSize: " + image.getScaledWidth() + "x" + image.getScaledHeight());
-				System.out.println("    DisplayAreaSize: " + image.getSize().width + "x" + image.getSize().height);
-				System.out.println("    DisplayImageSize: " + displayImageWidth + "x" + displayImageHeight);
-				System.out.println("    horizontalSurplusRatio: " + horizontalSurplusRatio);
-				System.out.println("    widthSurplus: " + widthSurplus);
-			}
-			
-			horizontalScrollBar.setVisible(widthSurplus > 0);
-			verticalScrollBar.setVisible(heightSurplus > 0);
-			
-			horizontalScrollBar.setMinimum(0);
-			horizontalScrollBar.setMaximum(widthSurplus);
-			horizontalScrollBar.setUnitIncrement((int) (0.01 * widthSurplus));
-			verticalScrollBar.setMinimum(0);
-			verticalScrollBar.setMaximum(heightSurplus);
-			
-			double x = p.getPosition().getX();
-			int horizontalValue = (int) (x / p.getImage().getWidth() * widthSurplus);
-			horizontalScrollBar.setValue(horizontalValue);
-			horizontalScrollBarOldValue = horizontalValue;
-			
-			double y = p.getPosition().getY();
-			int verticalValue = (int) (y / p.getImage().getHeight() * heightSurplus);
-			verticalScrollBar.setValue(verticalValue);
-			verticalScrollBarOldValue = verticalValue;
-			
-			
-			if (1.999 <= p.getZoom() && p.getZoom() <= 2.001) {
-				System.out.println("    center: (" + (int) x + ";" + (int) y + ")");
-				System.out.println("    horizontalValue: " + horizontalValue);
-			}
-			//System.out.println(horizontalScrollBar.getMinimum() + " < " + horizontalScrollBar.getValue() + " < " + horizontalScrollBar.getMaximum());
-			
-			isLoadingScrollBar = false;
-		}
-		*/
-	}
-	
 	private class DragAndDropListener extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -230,7 +173,7 @@ public class GraphicalPerspectiveView extends JPanel {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (buttonPressed && e.getButton() == MouseEvent.BUTTON1) {
+			if ((buttonPressed && e.getButton() == MouseEvent.BUTTON1) && !(perspective==null)) {
 				buttonPressed = false;
 		
 				int horizontalTranslation = (int) ((pressedPosition.x - e.getPoint().x) / perspective.getZoom());
@@ -245,7 +188,7 @@ public class GraphicalPerspectiveView extends JPanel {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (buttonPressed) {
+			if ((buttonPressed) && !(perspective==null)) {
 				int horizontalTranslation = (int) ((pressedPosition.x - e.getPoint().x) / perspective.getZoom());
 				int verticalTranslation = (int) ((pressedPosition.y - e.getPoint().y) / perspective.getZoom());
 

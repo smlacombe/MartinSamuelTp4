@@ -236,7 +236,7 @@ public class MainWindow extends JFrame {
 	private JMenu getImageMenu() {
 		JMenu imageMenu = new JMenu(lang.getProperty("app.menu.image"));
 		JMenuItem openImageItem = new JMenuItem(
-				lang.getProperty("app.menu.image.change"));
+				lang.getProperty("app.menu.image.loadImage"));
 		openImageItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
