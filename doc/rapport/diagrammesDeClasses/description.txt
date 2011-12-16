@@ -1,0 +1,11 @@
+Ce diagramme présente les grandes lignes du logiciel. La plupart des détails d'implémentations n'ont pas été ajoutés au diagramme.
+
+Le paquetage « java.util » se veut une représentation des éléments de la bibliothèque officielle de Java que nous avons utilisés pour l'implantation du patron observateur.
+
+Le paquetage « app » contient les classes représentant la couche « backend » de l'application contenant le modèle, les commandes et le contrôleur. La classe « Perspective » est le modèle de l'application.
+Les différentes commandes de l'application sont définies dans les classes « ChangeImageCommand », « TranslationCommand » et « ZoomCommand ».
+ L'utilité des classes « ImageChangedEvent », « ZoomChangedEvent » et « PositionChangedEvent » sera expliquée dans la partie précédant les décisions de conception ainsi que dans la discussion sur les patrons de conception.
+
+Le paquetage « gui » représentent les classes de l'interface utilisateur. Parmi celui-ci, on retrouve les différentes vues du modèle MVC dont la vue textuelle « TextualPerspectiveView » et la vue graphique « GraphicalPerspectiveView ». On retrouve le composant « ImageComponent » utilisé seulement pour l'affichage des images. En dernier, on retrouve l'interface graphique englobante « MainWindow » qui agrège les vues.
+
+Le paquetage « container » contient un « wrapper » du conteneur « deque » que nous avons implémenter pour faire office de pile pour contenir les différentes commandes pour défaire et refaire les commandes.
